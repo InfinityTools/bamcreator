@@ -190,19 +190,41 @@ func (g *Graphics) importImageGIF(r io.Reader) {
   if isAnim { logging.Log("Decoding GIF frames") }
   numFrames := len(data.Image)
   g.frames = make([]Frame, numFrames)
-  var imgParent *image.RGBA = nil
+
+  // Creating master image with global canvas size for all frames
+  imgMain := image.NewRGBA(image.Rect(0, 0, data.Config.Width, data.Config.Height))
+
   for idx := 0; idx < numFrames; idx++ {
     imgCur := data.Image[idx]
-    if imgParent == nil {
-      imgParent = image.NewRGBA(image.Rect(0, 0, data.Config.Width, data.Config.Height))
+    mode := data.Disposal[idx]
+
+    // Backing up current frame content for later
+    var imgBackup *image.RGBA = nil
+    if mode == gif.DisposalPrevious {
+      if imgBackup == nil {
+        imgBackup = image.NewRGBA(imgMain.Bounds())
+      }
+      draw.Draw(imgBackup, imgBackup.Bounds(), imgMain, image.ZP, draw.Src)
     }
-    draw.Draw(imgParent, imgCur.Bounds(), imgCur, imgCur.Bounds().Min, draw.Over)
 
-    imgDst := image.NewRGBA(imgParent.Bounds())
-    draw.Draw(imgDst, imgDst.Bounds(), imgParent, imgParent.Bounds().Min, draw.Src)
-    g.frames[idx].img = imgDst
-
+    // Rendering frame
+    draw.Draw(imgMain, imgCur.Bounds(), imgCur, imgCur.Bounds().Min, draw.Over)
+    img := image.NewRGBA(imgMain.Bounds())
+    draw.Draw(img, img.Bounds(), imgMain, image.ZP, draw.Src)
+    g.frames[idx].img = img
     g.frames[idx].cx, g.frames[idx].cy = 0, 0
+
+    // Cleaning up frame
+    switch mode {
+      case gif.DisposalBackground:
+        // Restore current frame region to background color
+        draw.Draw(imgMain, imgCur.Bounds(), image.Transparent, image.ZP, draw.Src)
+      case gif.DisposalPrevious:
+        // Restore content of previous frame
+        draw.Draw(imgMain, imgMain.Bounds(), imgBackup, image.ZP, draw.Src)
+      default:  // Don't clear content from previous frame(s)
+    }
+
     if isAnim { logging.LogProgressDot(idx, numFrames, 79 - 19) }  // 19 is length of prefixed string
   }
   if isAnim { logging.OverridePrefix(false, false, false).Logln("") }
