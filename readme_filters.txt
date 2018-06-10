@@ -123,7 +123,14 @@ Filter name: alpha2color
 Filter options: n/a
 
 
-12. Canvas
+12. Color to alpha conversion
+Description: This filter calculates alpha from the color value. It is basically the counterpart of the "alpha2color"
+             filter. Only fully opaque color values (alpha=255) will be considered.
+Filter name: color2alpha
+Filter options: n/a
+
+
+13. Canvas
 Description: This filter allows you to modify the canvas, i.e. the unused region around frame content.
 Filter name: canvas
 Filter options:
@@ -145,7 +152,7 @@ Verticalalign:    Specifies how frame content should be aligned if "MinHeight" i
 UpdateCenter:     A boolean value that indicates whether frame center position should be adjusted to match frame
                   content. Default: true
 
-13. Mirror
+14. Mirror
 Description: This filter mirrors frame content either horizontally, vertically, or on both axis.
 Filter name: mirror
 Filter options:
@@ -155,7 +162,7 @@ UpdateCenter: A boolean value that indicates whether frame center position shoul
               Default: true
 
 
-14. Rotate
+15. Rotate
 Description: This filter rotates frame content around the center. Orthogonal angles (90/180/270) are always applied
              without loss in quality. Non-orthogonal operation will result in some quality degradation.
 Filter name: rotate
@@ -168,7 +175,7 @@ UpdateCenter: A boolean value that indicates whether frame center position shoul
               Default: true
 
 
-15. Resize
+16. Resize
 Description: Changes dimension of frames and their content by a specified scaling factor. There are several scaling
              algorithms available.
 Filter name: resize
@@ -193,7 +200,7 @@ UpdateCenter: A boolean value that indicates whether frame center position shoul
               Default: true
 
 
-16. Translate
+17. Translate
 Description: This filter moves the center position by the specified amount.
 Filter name: translate
 Filter options:
@@ -204,7 +211,7 @@ Y:    A numeric value that specifies the amount of pixels to move the center poi
 Note: Moving the center point in one direction will result in the frame content being moved to the opposite direction.
 
 
-17. Split BAM frames
+18. Split BAM frames
 Description: This filter allows you to split BAM frames into multiple segments. This might be useful for large
              multi-part creature animations or item description images.
              Note: Because of technical reasons you can only output one segment per conversion. To convert the
