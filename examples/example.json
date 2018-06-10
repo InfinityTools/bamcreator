@@ -1,0 +1,82 @@
+{
+  "output": {
+    "version": 1,
+    "file": "default.bam",
+    "pvrzpath": ""
+  },
+  "input": {
+    "static": true,
+    "files": [
+      "./input/files/input00.png",
+      "./input/files/input01.png",
+      "./input/files/input02.png"
+    ],
+    "filesequence": {
+      "path": "./input/files",
+      "prefix": "input",
+      "suffixstart": 0,
+      "suffixend": 63,
+      "suffixlength": 2,
+      "ext": "bmp"
+    },
+    "search": [
+      "",
+      "./input/files"
+    ]
+  },
+  "settings": {
+    "center": [
+      [16, -21],
+      [0, 0]
+    ],
+    "sequence": [
+      [0,1,2,3,4],
+      [5,6,7,8,9]
+    ]
+  },
+  "bamv1": {
+    "compress": true,
+    "rle": -1,
+    "alpha": true,
+    "qualitymin": 80,
+    "qualitymax": 100,
+    "speed": 3,
+    "dither": 0.0,
+    "transcolor": "0,255,0,255",
+    "usetranscolor": false,
+    "sortby": "none",
+    "color": [
+      "0xff000000",
+      "0,128,255",
+      "128,128,128,128"
+    ],
+    "usepalette": false,
+    "palette": "./path/to/palette.pal"
+  },
+  "bamv2": {
+    "startindex": 1000,
+    "encoding": 0,
+    "threshold": 5.0,
+    "quality": 1,
+    "weightalpha": true,
+    "usemetric": false
+  },
+  "filters": [
+    {
+      "name": "brightness",
+      "options": [
+        {"key": "Level", "value": "1.5"}
+      ]
+    },
+    {
+      "name": "canvas",
+      "options": [
+        {"key": "Trim", "value": "true"},
+        {"key": "MinWidth", "value": "200"},
+        {"key": "MinHeight", "value": "200"},
+        {"key": "HorizontalAlign", "value": "center"},
+        {"key": "VerticalAlign", "value": "center"}
+      ]
+    }
+  ]
+}
