@@ -32,7 +32,7 @@
         <files>
             <path>./input/files/input00.png</path>
             <path>./input/files/input01.png</path>
-            <path>./input/files/input02.png</path>
+            <path>./input/files/input02.gif:1:3</path>
         </files>
         <!-- Set of parameters to generate a sequence of input files. Ignored if "static" is set to "true". -->
         <filesequence>

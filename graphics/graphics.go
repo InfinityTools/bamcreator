@@ -201,9 +201,7 @@ func (g *Graphics) importImageGIF(r io.Reader) {
     // Backing up current frame content for later
     var imgBackup *image.RGBA = nil
     if mode == gif.DisposalPrevious {
-      if imgBackup == nil {
-        imgBackup = image.NewRGBA(imgMain.Bounds())
-      }
+      imgBackup = image.NewRGBA(imgMain.Bounds())
       draw.Draw(imgBackup, imgBackup.Bounds(), imgMain, image.ZP, draw.Src)
     }
 
