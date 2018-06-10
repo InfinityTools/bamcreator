@@ -7,9 +7,9 @@
 - BAM file output in BAM V1 or BAM V2 format.
 - Supported input file formats: BAM, BMP, (animated) GIF, JPG and PNG.
 - Full control over the resulting BAM structure, such as individual frame, frame center and frame cycle definitions.
-- BAM V1: Palette generation with or without alpha support.
+- BAM V1: Palette generation with or without alpha channel support.
 - BAM V2: PVRZ texture generation.
-- Various quality and compression settings for both BAM output types.
+- A great number of settings to fine-tune the resulting BAM file.
 - High performance by taking advantage of multithreading.
 - A powerful filter processor: Choose one or more filters out of over 15 different filter types to improve, alter or optimize the resulting BAM output.
 

@@ -144,7 +144,7 @@ fi
 # Starting build operation
 pkgBinPath=$builddir/$pkgBinRoot/$libos/$libarch/$target$pkgBinExt
 echo "Building \"$pkgBinPath\"..."
-# echo "CGO_LDFLAGS="$ldflags" go build -o \"$pkgBinPath\" $build_flags $bin_flags $pkgPrefix/$target"
+# echo "CGO_LDFLAGS=\"$ldflags\" go build -o \"$pkgBinPath\" $build_flags $bin_flags $pkgPrefix/$target"
 CGO_LDFLAGS="$ldflags" go build -o "$pkgBinPath" $build_flags $bin_flags $pkgPrefix/$target || terminate "Cancelled." 1
 
 # Applying compression if needed
