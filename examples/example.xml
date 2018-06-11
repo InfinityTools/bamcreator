@@ -97,10 +97,10 @@
              Caution: High speeds combined with high quality will use more colors than necessary and will be less
              likely to meet minimum required quality.
              Features dependent on speed:
-               Noise-sensitive dithering	speed     1 to 5
-               Forced posterization	                8-10 or if image has more than million colors
-               Quantization error known	            1-7 or if minimum quality is set
-               Additional quantization techniques	  1-6
+               Noise-sensitive dithering speed      1 to 5
+               Forced posterization                 8-10 or if image has more than million colors
+               Quantization error known             1-7 or if minimum quality is set
+               Additional quantization techniques   1-6
              Default: 3 -->
         <speed>3</speed>
         <!-- Specify whether to dither the output graphics. Value must be in range [0.0, 1.0]. Set to 0 to disable
@@ -136,7 +136,7 @@
         </color>
         <!-- Setting this value to true instructs the converter to use the color table from the file specified in the
              palette field below. This setting overrides the following color-related BAM V1 options: fixed color
-             entries (color>entry), qualitymin, qualitymax and speed. Default: false -->
+             entries (color>entry), sortby, qualitymin, qualitymax and speed. Default: false -->
         <usepalette>false</usepalette>
         <!-- Path to optional external palette. Palette can be imported from BAM, BMP, GIF and PNG graphics, as well as
              Windows Palette files (*.pal) and Adobe Color Tables (*.act). Can be overridden by command line parameter.
@@ -155,7 +155,7 @@
            Supported types:
              0:   Determine automatically based on input data
              1:   Enforce DXT1 (full transparency only, supported by EE games)
-             2:   Enforce DXT3 (uses discrete alpha values, not supported by EE games)
+             2:   Enforce DXT3 (uses discrete alpha values, currently not supported by EE games)
              3:   Enforce DXT5 (uses blended alpha values, supported by EE games)
            Default: 0 -->
       <encoding>0</encoding>
