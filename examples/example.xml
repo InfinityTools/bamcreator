@@ -16,7 +16,7 @@
 
     <!-- The input file section. Supported image formats: BAM (frames only), BMP, GIF, JPG and PNG. -->
     <input>
-        <!-- Indictes whether to use a static list of files. Set to false to use a file sequence defined by parameters
+        <!-- Indicates whether to use a static list of files. Set to false to use a file sequence defined by parameters
              instead. Default: true
              Note: Boolean values accept the keywords "true" and "false" as well as 0 for "false" or any non-zero
                    number for "true". -->
@@ -62,7 +62,8 @@
     <!-- General BAM settings -->
     <settings>
         <!-- List of frame center locations in the form "x,y". If less center entries than frames are defined, then
-             last center definition will be used for remaining frames. May be omitted for input files of type BAM.
+             last center definition will be used for remaining frames. May be omitted for input files of type BAM that
+             provide their own center coordinates.
              Default: 0,0 for all frames, unless overridden by input file. -->
         <center>16,-21</center>
         <center>0,0</center>
@@ -110,7 +111,7 @@
              Default: green / RGBA(0,255,0,255)-->
         <transcolor>0,255,0,255</transcolor>  <!-- RGBA(0, 255, 0, 255) - opaque green -->
         <!-- Indicates whether the color defined by "transcolor" will be treated as transparent in the resulting BAM V1
-             file. Default: false -->
+             file. Can be overridden by command line parameter. Default: false -->
         <usetranscolor>false</usetranscolor>
         <!-- Specify whether to sort the palette of the resulting BAM file. Fixed color entries or external palettes
              are not affected by the sort operation. Choose one of the following criteria:
@@ -138,7 +139,8 @@
              entries (color>entry), qualitymin, qualitymax and speed. Default: false -->
         <usepalette>false</usepalette>
         <!-- Path to optional external palette. Palette can be imported from BAM, BMP, GIF and PNG graphics, as well as
-             Windows Palette files (*.pal) and Adobe Color Tables (*.act). -->
+             Windows Palette files (*.pal) and Adobe Color Tables (*.act). Can be overridden by command line parameter.
+         -->
         <palette>./path/to/palette.pal</palette>
     </bamv1>
 
@@ -181,7 +183,8 @@
         <!-- The filter name. Choose from the list of available filters. Unknown filters are ignored. This field is
              mandatory. -->
         <name>brightness</name>
-        <!-- A filter-specific option. You can define zero, one or more options. -->
+        <!-- A filter-specific option. You can define zero, one or more options. Options can be overridden by command
+             line parameters. -->
         <option>
           <!-- The option name. -->
           <key>Level</key>
