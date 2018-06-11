@@ -188,6 +188,8 @@ func generateBAM(cfg *config.BamConfig) error {
     sb.WriteString(fmt.Sprintf(", speed: %d", bamOut.GetSpeed()))
     sb.WriteString(fmt.Sprintf(", dither: %v", bamOut.GetDither()))
     sb.WriteString(fmt.Sprintf(", # fixed colors: %d", bamOut.GetFixedColorLength()))
+    b := bamOut.GetPalette() != nil
+    sb.WriteString(fmt.Sprintf(", external palette: %v", b))
   } else {
     sb.WriteString(fmt.Sprintf(", PVRZ output path: %q", pvrzOutPath))
     sb.WriteString(fmt.Sprintf(", PVRZ start index: %d", bamOut.GetPvrzStartIndex()))

@@ -77,6 +77,14 @@ func importPaletteBAM(rs io.ReadSeeker) (color.Palette, error) {
 
 // Used internally. Imports a BMP palette.
 func importPaletteBMP(rs io.ReadSeeker) (color.Palette, error) {
+  cfg, err := bmp.DecodeConfig(rs)
+  if err != nil { return nil, err }
+  if pal, err := getConfigPalette(cfg); err == nil {
+    return pal, nil
+  }
+
+  _, err = rs.Seek(0, io.SeekStart)
+  if err != nil { return nil, err }
   img, err := bmp.Decode(rs)
   if err != nil { return nil, err }
   return getImagePalette(img)
@@ -84,6 +92,14 @@ func importPaletteBMP(rs io.ReadSeeker) (color.Palette, error) {
 
 // Used internally. Imports a GIF palette.
 func importPaletteGIF(rs io.ReadSeeker) (color.Palette, error) {
+  cfg, err := gif.DecodeConfig(rs)
+  if err != nil { return nil, err }
+  if pal, err := getConfigPalette(cfg); err == nil {
+    return pal, nil
+  }
+
+  _, err = rs.Seek(0, io.SeekStart)
+  if err != nil { return nil, err }
   img, err := gif.Decode(rs)
   if err != nil { return nil, err }
   return getImagePalette(img)
@@ -91,6 +107,14 @@ func importPaletteGIF(rs io.ReadSeeker) (color.Palette, error) {
 
 // Used internally. Imports a PNG palette.
 func importPalettePNG(rs io.ReadSeeker) (color.Palette, error) {
+  cfg, err := png.DecodeConfig(rs)
+  if err != nil { return nil, err }
+  if pal, err := getConfigPalette(cfg); err == nil {
+    return pal, nil
+  }
+
+  _, err = rs.Seek(0, io.SeekStart)
+  if err != nil { return nil, err }
   img, err := png.Decode(rs)
   if err != nil { return nil, err }
   return getImagePalette(img)
@@ -187,5 +211,15 @@ func getImagePalette(img image.Image) (color.Palette, error) {
       return pal, nil
     }
   }
-  return nil, errors.New("No palette data found")
+  return nil, errors.New("No palette data available")
+}
+
+
+// Used internally. Returns the global palette stored in the Config structure if available.
+func getConfigPalette(cfg image.Config) (color.Palette, error) {
+  if pal, ok := cfg.ColorModel.(color.Palette); ok {
+    return pal, nil
+  } else {
+    return nil, errors.New("No palatte data available")
+  }
 }
