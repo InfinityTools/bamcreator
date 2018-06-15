@@ -18,6 +18,7 @@ const (
   CMDOPT_LOG_STYLE = "log-style"
   CMDOPT_THREADED = "threaded"
   CMDOPT_NO_THREADED = "no-threaded"
+  CMDOPT_OPTIMIZE = "optimize"
   CMDOPT_BAM_VERSION = "bam-version"
   CMDOPT_BAM_OUTPUT = "bam-output"
   CMDOPT_BAM_PVRZ_PATH = "bam-pvrz-path"
@@ -56,6 +57,7 @@ type CmdOptions struct {
   verbose             OptBool
   logStyle            OptBool
   threaded            OptBool
+  optimize            OptInt
   bamVersion          OptInt
   bamOutput           OptText
   bamPvrzPath         OptText
@@ -97,6 +99,7 @@ func loadArgs(args []string) error {
   params.AddParameter(CMDOPT_NO_THREADED, nil, 0)
   params.AddParameter(CMDOPT_THREADED, nil, 0)
   params.AddParameter(CMDOPT_NO_THREADED, nil, 0)
+  params.AddParameter(CMDOPT_OPTIMIZE, nil, 1)
   params.AddParameter(CMDOPT_BAM_VERSION, nil, 1)
   params.AddParameter(CMDOPT_BAM_OUTPUT, nil, 1)
   params.AddParameter(CMDOPT_BAM_PVRZ_PATH, nil, 1)
@@ -180,6 +183,16 @@ func loadArgs(args []string) error {
       case CMDOPT_NO_THREADED:
         if !cmdOptions.threaded.set { cmdOptions.optionsLength++ }
         cmdOptions.threaded = OptBool{false, true}
+      case CMDOPT_OPTIMIZE:
+        if !cmdOptions.optimize.set { cmdOptions.optionsLength++ }
+        if len(arg.Arguments) > 0 {
+          if i, x := arg.Arguments[0].Int(); x {
+            if i < 0 { i = 0 }
+            cmdOptions.optimize = OptInt{int(i), true}
+          } else {
+            return fmt.Errorf("Option %q: Invalid argument %v", arg.Name, arg.Arguments[0])
+          }
+        }
       case CMDOPT_BAM_VERSION:
         if !cmdOptions.bamVersion.set { cmdOptions.optionsLength++ }
         if len(arg.Arguments) > 0 {
@@ -374,6 +387,10 @@ func argsLogStyle() (bool, bool) {
 
 func argsThreaded() (bool, bool) {
   return cmdOptions.threaded.value, cmdOptions.threaded.set
+}
+
+func argsOptimize() (int, bool) {
+  return cmdOptions.optimize.value, cmdOptions.optimize.set
 }
 
 func argsBamVersion() (int, bool) {

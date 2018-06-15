@@ -451,15 +451,19 @@ func (bam *BamFile) encodeBamV1() []byte {
     }
   }
 
-  numFrames := len(bam.frames)
-  numCycles := len(bam.cycles)
+  // Applying optimizations
+  frames, cycles := bam.optimize()
+  if bam.err != nil { return nil }
+
+  numFrames := len(frames)
+  numCycles := len(cycles)
   ofsFrames := 0x18
   ofsCycles := ofsFrames + numFrames * 0x0c
   ofsPalette := ofsCycles + numCycles * 0x04
   ofsLookup := ofsPalette + 256*4
   ofsFrameData := ofsLookup
   for i := 0; i < numCycles; i++ {
-    ofsFrameData += len(bam.cycles[i]) * 2
+    ofsFrameData += len(cycles[i]) * 2
   }
 
   // pre-allocating and setting buffer up to frame pixel data
@@ -487,7 +491,7 @@ func (bam *BamFile) encodeBamV1() []byte {
   // writing cycle entries
   var idxLookup uint16 = 0
   for i := 0; i < numCycles; i++ {
-    cycle := bam.cycles[i]
+    cycle := cycles[i]
 
     // writing cycle entry
     ofs := ofsCycles + i * 0x04
@@ -507,11 +511,11 @@ func (bam *BamFile) encodeBamV1() []byte {
   }
 
   // applying filters
-  filteredFrames, err := bam.applyFilters()
-  if err != nil { bam.err = err; return nil }
+  frames, bam.err = bam.applyFilters(frames)
+  if bam.err != nil { return nil }
 
   // writing palette
-  outFrames, palette, err := bam.generatePalette(filteredFrames)
+  palImages, palette, err := bam.generatePalette(frames)
   if err != nil { bam.err = err; return nil }
   for i := 0; i < len(palette); i++ {
     r, g, b, a := NRGBA(palette[i])
@@ -527,8 +531,8 @@ func (bam *BamFile) encodeBamV1() []byte {
   curOfsData := ofsFrameData
   for i := 0; i < numFrames; i++ {
     logging.LogProgressDot(i, numFrames, 79 - 20)  // 20 is length of prefix string
-    frame := filteredFrames[i]
-    img := outFrames[i]
+    frame := frames[i]
+    img := palImages[i]
 
     // writing frame data
     frameBuf := palettedToBytes(img)

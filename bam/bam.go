@@ -6,6 +6,7 @@ package bam
 import (
   "errors"
   "fmt"
+  "hash/fnv"
   "image"
   "image/color"
   "io"
@@ -104,6 +105,7 @@ type BamFile struct {
 
   // internal settings
   err           error     // stores error from last BAM-related operation
+  optimization  int       // optimization level
   bamVersion    int       // 1: BAM V1, 2: BAM V2
   bamV1         BamV1Config
   bamV2         BamV2Config
@@ -115,6 +117,7 @@ func CreateNew() *BamFile {
   bam := BamFile{ frames: make([]BamFrame, 0),
                   cycles: make([]BamCycle, 0),
                   err: nil,
+                  optimization: 0,
                   bamVersion: BAM_V1,
                   bamV1: BamV1Config { compress: false, rle: RLE_AUTO, discardAlpha: false, transColor: 0,
                                        qualityMin: 80, qualityMax: 100, speed: 3, dither: 0.0, fixedColors: make([]color.Color, 0),
@@ -195,6 +198,27 @@ func (bam *BamFile) Error() error {
 // unsuccessfully.
 func (bam *BamFile) ClearError() {
   bam.err = nil
+}
+
+
+// GetOptimization returns the optimization level to use when generating the output BAM file. Operation is skipped if
+// error state is set.
+func (bam *BamFile) GetOptimization() int {
+  if bam.err != nil { return 0 }
+  return bam.optimization
+}
+
+// SetOptimization sets the optimization level to use when generating the output BAM file. Operation is skipped if
+// error state is set. Available optimization levels:
+//   0    Apply no further optimizations.
+//   1    Remove unreferenced frames.
+//   2    Remove duplicate frames and update cycle lists.
+//   3    Remove similar frames and update cycle lists.
+// Levels are cumulative.
+func (bam *BamFile) SetOptimization(level int) {
+  if bam.err != nil { return }
+  if level < 0 { level = 0 }
+  bam.optimization = level
 }
 
 
@@ -613,4 +637,223 @@ func (bam *BamFile) exportPvrz(pvrMap bamV2TextureMap, outPath string, multithre
     // t1 := time.Now()
     // fmt.Printf("DEBUG: ExportEx() timing = %v\n", t1.Sub(t0))
   }
+}
+
+
+// Used internally. Applies optimizations based on current optimization level.
+func (bam *BamFile) optimize() (frames []BamFrame, cycles []BamCycle) {
+  if bam.optimization == 0 {
+    frames, cycles = bam.frames, bam.cycles
+    return
+  }
+
+  // Making deep copy of frames and cycles
+  frames = make([]BamFrame, len(bam.frames))
+  copy(frames, bam.frames)
+  cycles = make([]BamCycle, len(bam.cycles))
+  for i, cycle := range bam.cycles {
+    cycles[i] = make(BamCycle, len(cycle))
+    copy(cycles[i], cycle)
+  }
+
+  // Remove unused frames
+  // 1. Registering frame references
+  cycleSet := make(map[uint16]bool)
+  for _, cycle := range cycles {
+    for _, ref := range cycle {
+      cycleSet[ref] = true
+    }
+  }
+
+  // 2. Removing frames not referenced in cycles
+  for idx := len(frames) - 1; idx >= 0; idx-- {
+    if _, ok := cycleSet[uint16(idx)]; !ok {
+      // Frame not references -> remove frame
+      logging.Logf("Removing unreferenced frame: %d\n", idx)
+      if idx < len(frames) - 1 { copy(frames[idx:], frames[idx+1:]) }
+      frames = frames[:len(frames) - 1]
+      // Updating cycles
+      for _, cycle := range cycles {
+        for i := 0; i < len(cycle); i++ {
+          if cycle[i] > uint16(idx) { cycle[i]-- }
+        }
+      }
+    }
+  }
+  if bam.optimization == 1 { return }
+
+
+  // Remove duplicate frames
+  // 1. Generating list of hashes
+  hashes := make([]uint64, len(frames))
+  for i, frame := range frames { hashes[i] = getFrameHash(frame) }
+
+  // 2. Removing frames with identical hashes
+  for i := 0; i < len(frames); i++ {
+    v1 := hashes[i]
+    for j := len(frames) - 1; j > i; j-- {
+      if v1 == hashes[j] &&
+         frames[i].cx == frames[j].cx &&
+         frames[i].cy == frames[j].cy &&
+         frames[i].img.Bounds().Eq(frames[j].img.Bounds()) {
+        // Removing frame data
+        logging.Logf("Duplicate frames: %d and %d. Removing frame %d\n", i, j, j)
+        if j < len(frames) - 1 {
+          copy(frames[j:], frames[j+1:])
+          copy(hashes[j:], hashes[j+1:])
+        }
+        frames = frames[:len(frames) - 1]
+        hashes = hashes[:len(hashes) - 1]
+
+        // Updating cycles
+        for _, cycle := range cycles {
+          for k := 0; k < len(cycle); k++ {
+            if cycle[k] == uint16(j) {
+              cycle[k] = uint16(i)
+            } else if cycle[k] > uint16(j) {
+              cycle[k]--
+            }
+          }
+        }
+      }
+    }
+  }
+  if bam.optimization == 2 { return }
+
+
+  // Removing similar frames
+  const threshold = 5.0   // similarity threshold
+  for i := 0; i < len(frames); i++ {
+    for j := len(frames) - 1; j > i; j-- {
+      if frames[i].cx == frames[j].cx &&
+         frames[i].cy == frames[j].cy &&
+         computeMSE(frames[i].img, frames[j].img, true) < threshold {
+        // Removing frame data
+        logging.Logf("Similar frames: %d and %d. Removing frame %d\n", i, j, j)
+        if j < len(frames) - 1 {
+          copy(frames[j:], frames[j+1:])
+        }
+        frames = frames[:len(frames) - 1]
+
+        // Updating cycles
+        for _, cycle := range cycles {
+          for k := 0; k < len(cycle); k++ {
+            if cycle[k] == uint16(j) {
+              cycle[k] = uint16(i)
+            } else if cycle[k] > uint16(j) {
+              cycle[k]--
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return
+}
+
+
+// Used internally. Returns the hash of the given BAM frame.
+func getFrameHash(frame BamFrame) uint64 {
+  hash := fnv.New64a()
+  buf := make([]byte, 4)
+
+  // Hashing center location
+  for i := uint(0); i < 4; i++ {
+    buf[i] = byte(frame.cx >> i*8)
+  }
+  hash.Write(buf)
+  for i := uint(0); i < 4; i++ {
+    buf[i] = byte(frame.cy >> i*8)
+  }
+  hash.Write(buf)
+
+  // Hashing image
+  x0, x1 := frame.img.Bounds().Min.X, frame.img.Bounds().Max.X
+  y0, y1 := frame.img.Bounds().Min.Y, frame.img.Bounds().Max.Y
+  for y := y0; y < y1; y++ {
+    for x := x0; x < x1; x++ {
+      r, g, b, a := frame.img.At(x, y).RGBA()
+      buf[0] = byte(r >> 8)
+      buf[1] = byte(g >> 8)
+      buf[2] = byte(b >> 8)
+      buf[3] = byte(a >> 8)
+      hash.Write(buf)
+    }
+  }
+
+  return hash.Sum64()
+}
+
+
+// Used internally. Calculates the signal/noise ratio (in dB) from the given MSE value.
+// Return value is clamped to (0, 100].
+// func toPSNR(mse float64) float64 {
+  // if mse < 0.000000001 { return 100.0 }
+  // return 20.0 * math.Log10(255.0 / math.Sqrt(mse))
+// }
+
+// Used internally. Calculates the MSE (mean squared error) between the two specified images.
+// Returns a weighted value for combined color and alpha parts. If exactMatch is true, returns 16777216.0 when both
+// images differ in dimension.
+// A value < 5 can be considered a close match, 7 - 10 is still similar. 20 or higher indicates noticeable differences.
+func computeMSE(img1, img2 image.Image, exactMatch bool) float64 {
+  cmse, amse := 0.0, 0.0
+  if img1 == nil || img2 == nil { return 0.0 }
+  if exactMatch &&
+     (img1.Bounds().Dx() != img2.Bounds().Dx() ||
+      img1.Bounds().Dy() != img2.Bounds().Dy()) {
+    return 16777216.0
+  }
+
+  rgba1 := make([]byte, 4)
+  rgba2 := make([]byte, 4)
+  width1 := img1.Bounds().Dx()
+  width2 := img2.Bounds().Dx()
+  width := width1; if width2 < width { width = width2 }
+  height1 := img1.Bounds().Dy()
+  height2 := img2.Bounds().Dy()
+  height := height1; if height2 < height { height = height2 }
+
+  for y := 0; y < height; y++ {
+    for x := 0; x < width; x++ {
+      r, g, b, a := img1.At(img1.Bounds().Min.X + x, img1.Bounds().Min.Y + y).RGBA()
+      rgba1[0] = byte(r >> 8)
+      rgba1[1] = byte(g >> 8)
+      rgba1[2] = byte(b >> 8)
+      rgba1[3] = byte(a >> 8)
+
+      r, g, b, a = img2.At(img2.Bounds().Min.X + x, img2.Bounds().Min.Y + y).RGBA()
+      rgba2[0] = byte(r >> 8)
+      rgba2[1] = byte(g >> 8)
+      rgba2[2] = byte(b >> 8)
+      rgba2[3] = byte(a >> 8)
+
+      pc, pa := computeMSEPixel(rgba1, rgba2)
+      cmse += pc
+      amse += pa
+    }
+  }
+  cmse /= float64(width*height*3)
+  amse /= float64(width*height)
+
+  return (3.0*cmse + amse) / 4.0
+}
+
+func computeMSEPixel(rgba1, rgba2 []byte) (cmse, amse float64) {
+  cmse, amse = 0.0, 0.0
+  if len(rgba1) < 4 || len(rgba2) < 4 { return }
+
+  // Computing color MSE
+  for i := 0; i < 3; i++ {
+    cmse += ErrorSq(float64(rgba1[i]), float64(rgba2[i]))
+  }
+  // Computing alpha MSE
+  amse = ErrorSq(float64(rgba1[3]), float64(rgba2[3]))
+
+  return
+}
+
+func ErrorSq(x, y float64) float64 {
+  return (x - y) * (x - y)
 }

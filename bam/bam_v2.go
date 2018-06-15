@@ -274,27 +274,31 @@ func (bam *BamFile) encodeBamV2(outPath string) (bamOut []byte, pvrMap bamV2Text
     }
   }
 
+  // Applying optimizations
+  frames, cycles := bam.optimize()
+  if bam.err != nil { return }
+
   pvrzIndex := bam.bamV2.pvrzStart
   numFrames := 0                            // to be updated
-  numCycles := len(bam.cycles)
+  numCycles := len(cycles)
   numBlocks := 0                            // to be updated
   ofsFrames := 0x20
   ofsCycles := ofsFrames                    // to be updated
   ofsBlocks := ofsCycles + numCycles * 0x04 // to be updated
 
   // applying filters
-  filteredFrames, err := bam.applyFilters()
-  if err != nil { bam.err = err; return }
+  frames, bam.err = bam.applyFilters(frames)
+  if bam.err != nil { return }
 
   // preparing pvrz
-  frames, pvrs := bam.packBamFrames(filteredFrames)
+  frameEntries, pvrs := bam.packBamFrames(frames)
   if bam.err != nil { return }
 
   // determine size of frame and block lists
-  for _, cycle := range bam.cycles {
+  for _, cycle := range cycles {
     numFrames += len(cycle)
     for _, frameIdx := range cycle {
-      numBlocks += len(frames[frameIdx].blocks)
+      numBlocks += len(frameEntries[frameIdx].blocks)
     }
   }
   ofsCycles += numFrames * 0x0c
@@ -324,7 +328,7 @@ func (bam *BamFile) encodeBamV2(outPath string) (bamOut []byte, pvrMap bamV2Text
 
   // writing bam structures
   frameIdx, blockIdx := 0, 0
-  for cycleIdx, cycle := range bam.cycles {
+  for cycleIdx, cycle := range cycles {
     // writing cycle entry
     ofs := ofsCycles + cycleIdx * 0x04
     out.PutUint16(ofs, uint16(len(cycle)))
@@ -334,7 +338,7 @@ func (bam *BamFile) encodeBamV2(outPath string) (bamOut []byte, pvrMap bamV2Text
 
     for _, fidx := range cycle {
       // writing frame entries
-      e := frames[fidx]
+      e := frameEntries[fidx]
       ofs = ofsFrames + frameIdx * 0x0c
       out.PutUint16(ofs, uint16(e.w))
       if out.Error() != nil { bam.err = out.Error(); return }

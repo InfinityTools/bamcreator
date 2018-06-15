@@ -127,6 +127,7 @@ func generateBAM(cfg *config.BamConfig) error {
 
   // setting up general options
   if b, x := argsThreaded(); x { bam.SetMultiThreaded(b) }
+  if i, x := argsOptimize(); x { bamOut.SetOptimization(i) }
   bamVersion, _ := cfg.GetConfigValueInt(config.SECTION_OUTPUT, config.KEY_OUTPUT_VERSION)
   if i, x := argsBamVersion(); x { bamVersion = int64(i) }
   bamOut.SetBamVersion(int(bamVersion))
@@ -177,7 +178,8 @@ func generateBAM(cfg *config.BamConfig) error {
   sb.WriteString("Options: ")
   sb.WriteString(fmt.Sprintf("verbose: %v", logging.GetVerbosity() < logging.INFO))
   sb.WriteString(fmt.Sprintf(", threading: %v", bam.GetMultiThreaded()))
-  sb.WriteString(fmt.Sprintf(", BAM version:= BAM V%d", bamVersion))
+  sb.WriteString(fmt.Sprintf(", optimize: %d", bamOut.GetOptimization()))
+  sb.WriteString(fmt.Sprintf(", BAM version: BAM V%d", bamVersion))
   sb.WriteString(fmt.Sprintf(", BAM output: %q", bamOutFile))
   if bamVersion == 1 {
     sb.WriteString(fmt.Sprintf(", compress: %v", bamOut.GetCompression()))
@@ -634,6 +636,12 @@ func printHelp() {
                    "                            Enabled by default if multiple CPU cores are\n" +
                    "                            detected.\n" +
                    "  --no-threaded             Disable multithreading for BAM conversion.\n" +
+                   "  --optimize level          Optimize BAM output file. Available levels:\n" +
+                   "                                0     No optimization.\n" +
+                   "                                1     Remove unreferenced frames.\n" +
+                   "                                2     Remove duplicate frames.\n" +
+                   "                                3     Remove similar frames.\n" +
+                   "                            Optimization level 0 is set by default.\n" +
                    "  --bam-version version     Set BAM output version. Can be 1 for BAM V1 or\n" +
                    "                            2 for BAM V2. Overrides setting in the config file.\n" +
                    "  --bam-output file         Set BAM output file. Overrides setting in the\n" +

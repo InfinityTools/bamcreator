@@ -52,12 +52,12 @@ func (bam *BamFile) CreateFilter(filterName string) BamFilter {
 
 
 // Used internally. Applies the chain of filters to input frames and returns the result.
-func (bam *BamFile) applyFilters() (out []BamFrame, err error) {
+func (bam *BamFile) applyFilters(frames []BamFrame) (out []BamFrame, err error) {
   // Preparing output frame list
-  tmp := make([]BamFrame, len(bam.frames)) // working array of frames
-  copy(tmp, bam.frames)
-  out = make([]BamFrame, len(bam.frames)) // updated with resulting frames after each filter
-  copy(out, bam.frames)
+  tmp := make([]BamFrame, len(frames)) // working array of frames
+  copy(tmp, frames)
+  out = make([]BamFrame, len(frames)) // updated with resulting frames after each filter
+  copy(out, frames)
 
   // Preparing filter chain
   filters := make([]BamFilter, 0, len(bam.filters) + 1)
