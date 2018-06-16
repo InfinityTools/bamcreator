@@ -1,9 +1,11 @@
-BAM Converter
-~~~~~~~~~~~~~
+BAM Creator
+~~~~~~~~~~~
 
-Version:  0.1
-Author:   Argent77
-Download:
+Version:    0.1
+Author:     Argent77
+
+Project:    https://github.com/InfinityTools/bamcreator
+Download:   https://github.com/InfinityTools/bamcreator/releases
 
 
 About
