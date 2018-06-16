@@ -641,7 +641,7 @@ func printHelp() {
                    "                                1     Remove unreferenced frames.\n" +
                    "                                2     Remove duplicate frames.\n" +
                    "                                3     Remove similar frames.\n" +
-                   "                            Optimization level 0 is set by default.\n" +
+                   "                            Optimization levels are cumulative. Default: 0\n" +
                    "  --bam-version version     Set BAM output version. Can be 1 for BAM V1 or\n" +
                    "                            2 for BAM V2. Overrides setting in the config file.\n" +
                    "  --bam-output file         Set BAM output file. Overrides setting in the\n" +
@@ -745,4 +745,3 @@ func directoryExists(dir string) bool {
   if err != nil { return false }
   return fi.Mode().IsDir()
 }
-

@@ -45,7 +45,7 @@ Options:
                                 1     Remove unreferenced frames.
                                 2     Remove duplicate frames.
                                 3     Remove similar frames.
-                            Optimization level 0 is set by default.
+                            Optimization levels are cumulative. Default: 0
 --bam-version version       Set BAM output version. Can be 1 for BAM V1 or 2 for BAM V2. Overrides setting in the
                             config file.
 --bam-output file           Set BAM output file. Overrides setting in the config file.
