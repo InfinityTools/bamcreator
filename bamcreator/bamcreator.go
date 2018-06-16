@@ -13,6 +13,7 @@ import (
   "os"
   "path/filepath"
   "regexp"
+  "runtime"
   "strconv"
   "strings"
 
@@ -726,7 +727,7 @@ func printHelp() {
 
 
 func printVersion() {
-  fmt.Printf("%s version %d.%d\n", TOOL_NAME, VERSION_MAJOR, VERSION_MINOR)
+  fmt.Printf("%s version %d.%d (binary: %s, %s)\n", TOOL_NAME, VERSION_MAJOR, VERSION_MINOR, runtime.GOOS, runtime.GOARCH)
 }
 
 
