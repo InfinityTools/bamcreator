@@ -30,6 +30,23 @@ folder.
 A detailed description of BAM filters can be found in "readme_filters.txt".
 
 
+Installation
+~~~~~~~~~~~~
+
+The mod archive contains binaries for
+- Windows:
+  - 32-bit: in bin/windows/386
+  - 64-bit: in bin/windows/amd64
+- Linux:
+  - 32-bit: in bin/linux/386
+  - 64-bit: in bin/linux/amd64
+- macOS:
+  - 64-bit: in bin/darwin/amd64
+
+There is no installation required. Simply unpack the binary of your choice into a directory on your system. You can
+optionally add the directory to your path to make it easier to work with the tool.
+
+
 Usage
 ~~~~~
 
@@ -183,7 +200,7 @@ sign signals the tool to accept data from standard input in place of a file.
 
 A fully commented example.xml with all available settings can be found in the "examples" subfolder. You can also find
 example.json, which contains the same configuration in JSON format. (See notes in commented example.xml about JSON file
-format limitations.
+format limitations.)
 
 
 Building from source
