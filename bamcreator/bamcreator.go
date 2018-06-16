@@ -28,7 +28,7 @@ import (
 
 const TOOL_NAME     = "BAM Creator"
 const VERSION_MAJOR = 0
-const VERSION_MINOR = 1
+const VERSION_MINOR = 2
 
 
 func main() {
