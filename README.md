@@ -21,7 +21,7 @@ A great number of configuration settings can be overridden by command line optio
 
 The tool requires the [Go compiler](https://golang.org/) to be installed. Code dependencies are automatically resolved when using the included build scripts. However, the packages [go-imagequant](https://github.com/InfinityTools/go-imagequant) and [go-squish](https://github.com/InfinityTools/go-squish) have to be prepared manually before they can be used in the build process.
 
-Install the upx packer (https://github.com/upx/upx/releases) if you want to make use of the `--compression` option of the build scripts.
+Install the upx packer (https://github.com/upx/upx/releases) if you want to make use of the `--compress` option of the build scripts.
 
 Use the provided build scripts (`build.cmd` for Windows, `build.sh` for Linux and macOS) to build the binaries. You can specify the build target and a number of options to influence the build process.
 

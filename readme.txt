@@ -211,7 +211,7 @@ resolved when using the included build scripts. However, the packages go-imagequ
 (https://github.com/InfinityTools/go-imagequant) and go-squish (https://github.com/InfinityTools/go-squish) have to
 be prepared manually before they can be used in the build process.
 
-Install the upx packer (https://github.com/upx/upx/releases) if you want to make use of the "--compression" option
+Install the upx packer (https://github.com/upx/upx/releases) if you want to make use of the "--compress" option
 of the build scripts.
 
 Use the provided build scripts ("build.cmd" for Windows, "build.sh" for Linux and macOS) to build the binaries.
