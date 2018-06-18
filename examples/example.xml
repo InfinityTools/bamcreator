@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- This is an example BAM generation definition file with annotations.
-     Configuration in XML allows you to omit options. The BAM Creator will use default values in that case.
-     Configuration in JSON does NOT allow you to omit options.
+     Configuration options in XML can be omitted. The BAM Creator will use default values in these cases.
+     Configuration options in JSON can also be omitted. However, default values will be ignored by the BAM Creator.
+     Instead, 0, 0.0, false, empty string or empty list will be used in most cases, depending on option type.
 -->
 <generator>
     <output>

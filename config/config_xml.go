@@ -13,7 +13,7 @@ import (
 // Used internally by xml.Unmarshal to store output settings.
 type XmlOutput struct {
   Version       string      `xml:"version"`
-  Path          string      `xml:"file"`
+  File          string      `xml:"file"`
   PvrzPath      string      `xml:"pvrzpath"`
 }
 
@@ -69,15 +69,15 @@ type XmlBamV2 struct {
 }
 
 // Used internally by xml.Unmarshal to store filter settings.
-type XmlBamFilterOption struct {
+type XmlFilterOption struct {
   Key           string      `xml:"key"`
   Value         string      `xml:"value"`
 }
 
 // Used internally by xml.Unmarshal to store filter options.
-type XmlBamFilter struct {
-  Name          string                `xml:"name"`
-  Options       []XmlBamFilterOption  `xml:"option"`
+type XmlFilter struct {
+  Name          string              `xml:"name"`
+  Options       []XmlFilterOption   `xml:"option"`
 }
 
 // Used internally by xml.Unmarshal to store configuration data from XML scripts.
@@ -88,7 +88,7 @@ type XmlGenerator struct {
   Settings      XmlSettings     `xml:"settings"`
   BamV1         XmlBamV1        `xml:"bamv1"`
   BamV2         XmlBamV2        `xml:"bamv2"`
-  Filters       []XmlBamFilter  `xml:"filters>filter"`
+  Filters       []XmlFilter     `xml:"filters>filter"`
 }
 
 
@@ -137,7 +137,7 @@ func processConfigXmlOutput(input *XmlGenerator, config *BamConfig) error {
   (*config)[SECTION_OUTPUT][KEY_OUTPUT_VERSION] = Int{intVal}
 
   var textVal string
-  textVal = fixPath(strings.TrimSpace(input.Output.Path))
+  textVal = fixPath(strings.TrimSpace(input.Output.File))
   if len(textVal) == 0 { textVal = "default.bam" }
   for len(textVal) > 1 && textVal[len(textVal)-1:] == "/" { textVal = textVal[:len(textVal)-1] }
   (*config)[SECTION_OUTPUT][KEY_OUTPUT_PATH] = Text{textVal}
