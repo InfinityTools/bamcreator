@@ -1,6 +1,8 @@
 /*
 Package palette provides functions for loading color sequences from various input formats without having to
 take care of the details.
+
+BAM Creator is released under the BSD 2-clause license. See LICENSE in the project's root folder for more details.
 */
 package palette
 

@@ -1,5 +1,7 @@
 /*
 Package sort provides functionality for sorting color tables by a selected characteristic.
+
+BAM Creator is released under the BSD 2-clause license. See LICENSE in the project's root folder for more details.
 */
 package sort
 

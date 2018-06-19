@@ -1,6 +1,8 @@
 /*
 Package config translates BAM generation configurations from XML or JSON structures into a preprocessed map structure
 for quick access.
+
+BAM Creator is released under the BSD 2-clause license. See LICENSE in the project's root folder for more details.
 */
 package config
 

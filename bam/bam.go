@@ -1,5 +1,7 @@
 /*
 Package bam deals with BAM file creation or manipulation.
+
+BAM Creator is released under the BSD 2-clause license. See LICENSE in the project's root folder for more details.
 */
 package bam
 
