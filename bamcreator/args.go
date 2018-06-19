@@ -83,10 +83,7 @@ type CmdOptions struct {
   argsExtra           []string
 }
 
-var (
-  cmdOptions  CmdOptions
-  configFiles []string
-)
+var cmdOptions  CmdOptions
 
 
 func loadArgs(args []string) error {
@@ -96,7 +93,6 @@ func loadArgs(args []string) error {
   params.AddParameter(CMDOPT_VERBOSE, nil, 0)
   params.AddParameter(CMDOPT_SILENT, nil, 0)
   params.AddParameter(CMDOPT_LOG_STYLE, nil, 0)
-  params.AddParameter(CMDOPT_NO_THREADED, nil, 0)
   params.AddParameter(CMDOPT_THREADED, nil, 0)
   params.AddParameter(CMDOPT_NO_THREADED, nil, 0)
   params.AddParameter(CMDOPT_OPTIMIZE, nil, 1)
