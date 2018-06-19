@@ -13,10 +13,10 @@ import (
   "os"
   "path/filepath"
   "regexp"
-  "runtime"
   "strconv"
   "strings"
 
+  "github.com/InfinityTools/bamcreator"
   "github.com/InfinityTools/bamcreator/config"
   "github.com/InfinityTools/bamcreator/bam"
   "github.com/InfinityTools/bamcreator/graphics"
@@ -26,9 +26,7 @@ import (
 )
 
 
-const TOOL_NAME     = "BAM Creator"
-const VERSION_MAJOR = 0
-const VERSION_MINOR = 2
+const TOOL_NAME = "BAM Creator"
 
 
 func main() {
@@ -56,7 +54,7 @@ func main() {
   }
 
   if _, x := argsVersion(); x {
-    printVersion()
+    bamcreator.PrintVersion(TOOL_NAME)
   } else if _, x := argsHelp(); x {
     printHelp()
   } else if argsExtraLength() == 0 {
@@ -723,11 +721,6 @@ func printHelp() {
                    "Note: Use minus sign (-) in place of configfile to read configuration data\n" +
                    "      from standard input."
   fmt.Println(helpText)
-}
-
-
-func printVersion() {
-  fmt.Printf("%s version %d.%d (binary: %s, %s)\n", TOOL_NAME, VERSION_MAJOR, VERSION_MINOR, runtime.GOOS, runtime.GOARCH)
 }
 
 
