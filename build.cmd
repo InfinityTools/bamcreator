@@ -44,18 +44,18 @@ set compress=0
 :ArgsLoop
 if "%~1"=="" goto ArgsFinished
 
-if "%~1"=="bamcreator" (
-  set target=bamcreator
+if "%~1"=="%targetBamCreator%" (
+  set target=%targetBamCreator%
   goto ArgsUpdate
 )
 
-if "%~1"=="bamconv" (
-  set target=bamconv
+if "%~1"=="%targetBamConv%" (
+  set target=%targetBamConv%
   goto ArgsUpdate
 )
 
-if "%~1"=="bamgen" (
-  set target=bamgen
+if "%~1"=="%targetBamGen%" (
+  set target=%targetBamGen%
   goto ArgsUpdate
 )
 
@@ -92,6 +92,7 @@ echo   --help           This help
 echo.
 echo Available targets:
 echo   bamcreator [default]
+echo   bamconv
 echo.
 call :DetectSystem
 echo The resulting binary is placed into the folder "bin/%libos%/%libarch%".

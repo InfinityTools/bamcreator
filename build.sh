@@ -12,6 +12,7 @@ show_help() {
   echo ""
   echo "Available targets:"
   echo "  bamcreator (default)"
+  echo "  bamconv"
   echo ""
   libos=$(go env GOOS)
   libarch=$(go env GOARCH)
@@ -75,14 +76,14 @@ build_flags=""
 while test $# != 0
 do
   case $1 in
-  bamcreator)
-    target="bamcreator"
+  $targetBamCreator)
+    target="$targetBamCreator"
     ;;
-  bamconv)
-    target="bamconv"
+  $targetBamConv)
+    target="$targetBamConv"
     ;;
-  bamgen)
-    target="bamgen"
+  $targetBamGen)
+    target="$targetBamGen"
     ;;
   --debug)
     bin_flags=""

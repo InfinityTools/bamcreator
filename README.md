@@ -38,10 +38,11 @@ Options:
 
 Available targets:
   bamcreator (default)
+  bamconv
 ```
 The resulting binary will be placed into the folder `./bin/$GOOS/$GOARCH`.
 
-Alternatively you can build binaries directly. Go into the subdirectory `bamcreator` and call `go build`.
+Alternatively you can build binaries directly. Go into the respective subdirectories `bamcreator` or `bamconv` and call `go build`.
 
 ## License
 
