@@ -12,6 +12,7 @@
 - A great number of settings to fine-tune the resulting BAM file.
 - High performance by taking advantage of multithreading.
 - A powerful filter processor: Choose one or more filters out of over 15 different filter types to improve, alter or optimize the resulting BAM output.
+- A supplementary tool `bamconv` that helps generate configuration data from BAM source files.
 
 Settings are parsed from configuration data in XML or JSON format. Configuration can be read from files or fetched directly from standard input. A fully commented `example.xml` and the json counterpart are included in the `examples` folder.
 
@@ -19,7 +20,7 @@ A great number of configuration settings can be overridden by command line optio
 
 # Building
 
-The tool requires the [Go compiler](https://golang.org/) to be installed. Code dependencies are automatically resolved when using the included build scripts. However, the packages [go-imagequant](https://github.com/InfinityTools/go-imagequant) and [go-squish](https://github.com/InfinityTools/go-squish) have to be prepared manually before they can be used in the build process.
+The tool requires the [Go compiler](https://golang.org/) to be installed. Code dependencies are automatically resolved when using the included build scripts. However, the packages [go-imagequant](https://github.com/InfinityTools/go-imagequant) and [go-squish](https://github.com/InfinityTools/go-squish) may have to be prepared manually before they can be used in the build process.
 
 Install the upx packer (https://github.com/upx/upx/releases) if you want to make use of the `--compress` option of the build scripts.
 
