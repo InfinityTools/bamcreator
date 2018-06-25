@@ -20,15 +20,15 @@
 
         <!-- The input file section. Supported image formats: BAM (frames only), BMP, GIF, JPG and PNG. -->
         <input>
-            <!-- Indicates whether to use a static list of files. Set to false to use a file sequence defined by parameters
-                 instead. Default: true
+            <!-- Indicates whether to use a static list of files. Set to false to use a file sequence defined by
+                 parameters instead. Default: true
                  Note: Boolean values accept the keywords "true" and "false" as well as 0 for "false" or any non-zero
                        number for "true". -->
             <static>true</static>
             <!-- List of static file paths. Ignored if "static" is set to "false".
-                 Note: For input files that may contain multiple frames (e.g. GIF or BAM) you can specify which frame to
-                       import by appending the frame index to the path name, separated by a colon. A second index separated
-                       by colon defines the upper bound (exclusive) of a range of frames.
+                 Note: For input files that may contain multiple frames (e.g. GIF or BAM) you can specify which frame
+                       to import by appending the frame index to the path name, separated by a colon. A second index
+                       separated by colon defines the upper bound (exclusive) of a range of frames.
                        Examples:
                        Load all BAM frames: ./input/files/example.bam
                        Load only BAM frame at index 2: ./input/files/example.bam:2
@@ -66,8 +66,8 @@
         <!-- General BAM settings -->
         <settings>
             <!-- List of frame center locations in the form "x,y". If less center entries than frames are defined, then
-                 last center definition will be used for remaining frames. May be omitted for input files of type BAM that
-                 provide their own center coordinates.
+                 last center definition will be used for remaining frames. May be omitted for input files of type BAM
+                 that provide their own center coordinates.
                  Default: 0,0 for all frames, unless overridden by input file. -->
             <center>16,-21</center>
             <center>0,0</center>
@@ -88,9 +88,10 @@
             <!-- Whether to preserve alpha part of BAM palette entries. Can be overridden by command line parameter.
                  Default: true -->
             <alpha>true</alpha>
-            <!-- Both quality settings must be in range [0, 100] and define how well colors will match the output palette. 
-                 0 is worst quality, 100 is best quality. The quantization process will fail if 256 colors are not enough
-                 to meet minimum quality. Quality 0 will always succeed. Can be overridden by command line parameters.
+            <!-- Both quality settings must be in range [0, 100] and define how well colors will match the output
+                 palette. 0 is worst quality, 100 is best quality. The quantization process will fail if 256 colors are
+                 not enough to meet minimum quality. Quality 0 will always succeed. Can be overridden by command line
+                 parameters.
                  Default: min=80, max=100 -->
             <qualitymin>80</qualitymin>
             <qualitymax>100</qualitymax>
@@ -110,12 +111,12 @@
             <!-- Specify whether to dither the output graphics. Value must be in range [0.0, 1.0]. Set to 0 to disable
                  dithering. Can be overridden by command line parameter. Default: 0.0 -->
             <dither>0.0</dither>
-            <!-- Treat this color as transparent when encountered in input frames. It can be used as an option if the input
-                 image format does not support transparency. Does nothing if "usetransparency" is set to false.
+            <!-- Treat this color as transparent when encountered in input frames. It can be used as an option if the
+                 input image format does not support transparency. Does nothing if "usetransparency" is set to false.
                  Default: green / RGBA(0,255,0,255)-->
             <transcolor>0,255,0,255</transcolor>  <!-- RGBA(0, 255, 0, 255) - opaque green -->
-            <!-- Indicates whether the color defined by "transcolor" will be treated as transparent in the resulting BAM V1
-                 file. Can be overridden by command line parameter. Default: false -->
+            <!-- Indicates whether the color defined by "transcolor" will be treated as transparent in the resulting
+                 BAM V1 file. Can be overridden by command line parameter. Default: false -->
             <usetranscolor>false</usetranscolor>
             <!-- Specify whether to sort the palette of the resulting BAM file. Fixed color entries or external palettes
                  are not affected by the sort operation. Choose one of the following criteria:
@@ -130,21 +131,21 @@
                    Add suffix "_reversed" to sort in reversed order, e.g. hue_reversed sorts hue in reversed order. -->
             <sortby>none</sortby>
             <!-- An optional list of predefined palette entries. Values are either defined as array of blue, green, red,
-                 and optional alpha, or as a single decimal or hexadecimal value of component order 0xAARRGGBB. Use alpha
-                 in range [1, 255]. Color entries with alpha=0 will always be remapped to palette index 0. Up to 255 color
-                 entries will be considered. A fully transparent color will always be added implicitly. -->
+                 and optional alpha, or as a single decimal or hexadecimal value of component order 0xAARRGGBB. Use
+                 alpha in range [1, 255]. Color entries with alpha=0 will always be remapped to palette index 0. Up to
+                 255 color entries will be considered. A fully transparent color will always be added implicitly. -->
             <color>
                 <entry>0xff000000</entry>       <!-- RGBA(0, 0, 0, 255) - opaque black -->
                 <entry>0,128,255</entry>        <!-- RGBA(255, 128, 0, 255) - using implicit alpha=255 -->
                 <entry>128,128,128,128</entry>  <!-- RGBA(128, 128, 128, 128) -->
             </color>
-            <!-- Setting this value to true instructs the converter to use the color table from the file specified in the
-                 palette field below. This setting overrides the following color-related BAM V1 options: fixed color
-                 entries (color>entry), sortby, qualitymin, qualitymax and speed. Default: false -->
+            <!-- Setting this value to true instructs the converter to use the color table from the file specified in
+                 the palette field below. This setting overrides the following color-related BAM V1 options: fixed
+                 color entries (color>entry), sortby, qualitymin, qualitymax and speed. Default: false -->
             <usepalette>false</usepalette>
-            <!-- Path to optional external palette. Palette can be imported from BAM, BMP, GIF and PNG graphics, as well as
-                 Windows Palette files (*.pal) and Adobe Color Tables (*.act). Can be overridden by command line parameter.
-             -->
+            <!-- Path to optional external palette. Palette can be imported from BAM, BMP, GIF and PNG graphics, as well
+                 as Windows Palette files (*.pal) and Adobe Color Tables (*.act). Can be overridden by command line
+                 parameter. -->
             <palette>./path/to/palette.pal</palette>
         </bamv1>
 
@@ -152,8 +153,8 @@
         <bamv2>
           <!-- The PVRZ start index. BAM V2 files refer to MOSxxxx.PVRZ files where xxxx is a numeric value in range
                [0, 99999]. 
-               Important: Maximum PVRZ index applies to all PVRZ files generation during BAM conversion. Can be overridden
-               by command line parameter. Default: 1000 -->
+               Important: Maximum PVRZ index applies to all PVRZ files generation during BAM conversion. Can be
+               overridden by command line parameter. Default: 1000 -->
           <startindex>1000</startindex>
           <!-- The PVRZ encoding type. Can be overridden by command line parameter.
                Supported types:
@@ -187,8 +188,8 @@
             <!-- The filter name. Choose from the list of available filters. Unknown filters are ignored. This field is
                  mandatory. -->
             <name>brightness</name>
-            <!-- A filter-specific option. You can define zero, one or more options. Options can be overridden by command
-                 line parameters. -->
+            <!-- A filter-specific option. You can define zero, one or more options. Options can be overridden by
+                 command line parameters. -->
             <option>
               <!-- The option name. -->
               <key>Level</key>
