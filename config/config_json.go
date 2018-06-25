@@ -81,8 +81,8 @@ type JsonFilter struct {
   Options       []JsonFilterOption  `json:"Options,omitempty"`
 }
 
-// Used internally by json.Unmarshal to store configuration data from JSON scripts.
-type JsonGenerator struct {
+// Used internally by json.Unmarshal to store a single conversion job.
+type JsonJob struct {
   Output        JsonOutput    `json:"Output,omitempty"`
   Input         JsonInput     `json:"Input,omitempty"`
   Settings      JsonSettings  `json:"Settings,omitempty"`
@@ -91,8 +91,14 @@ type JsonGenerator struct {
   Filters       []JsonFilter  `json:"Filters,omitempty"`
 }
 
+// Used internally by json.Unmarshal to store configuration data from JSON scripts.
+type JsonGenerator struct {
+  Jobs          []JsonJob     `json:"Job,omitempty"`
+}
+
+
 // Used internally. Parses JSON source into intermediate structures.
-func importJson(buffer []byte) (config *BamConfig, err error) {
+func importJson(buffer []byte) (config []*BamConfig, err error) {
   jsonGenerator := JsonGenerator{}
   err = json.Unmarshal(buffer, &jsonGenerator)
   if err != nil { return }
@@ -103,31 +109,38 @@ func importJson(buffer []byte) (config *BamConfig, err error) {
 
 
 // Used internally. Converts parsed JSON input into useful data types, taking defaults into account for omitted input.
-func processConfigJson(input *JsonGenerator) (config *BamConfig, err error) {
-  bam := make(BamConfig)
-  config = &bam
-  logging.Logln("Processing output settings")
-  err = processConfigJsonOutput(input, config)
-  if err != nil { return }
-  logging.Logln("Processing input settings")
-  err = processConfigJsonInput(input, config)
-  if err != nil { return }
-  logging.Logln("Processing BAM settings")
-  err = processConfigJsonSettings(input, config)
-  if err != nil { return }
-  logging.Logln("Processing BAM V1 settings")
-  err = processConfigJsonBamV1(input, config)
-  if err != nil { return }
-  logging.Logln("Processing BAM V2 settings")
-  err = processConfigJsonBamV2(input, config)
-  if err != nil { return }
-  logging.Logln("Processing filter settings")
-  err = processConfigJsonFilters(input, config)
+func processConfigJson(input *JsonGenerator) (config []*BamConfig, err error) {
+  config = make([]*BamConfig, 0)
+  if input == nil { err = fmt.Errorf("No JSON configuration data specified"); return }
+
+  for idx, job := range input.Jobs {
+    logging.Logf("Processing job %d\n", idx)
+    bam := make(BamConfig)
+    config = append(config, &bam)
+    logging.Logln("Processing output settings")
+    err = processConfigJsonOutput(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing input settings")
+    err = processConfigJsonInput(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing BAM settings")
+    err = processConfigJsonSettings(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing BAM V1 settings")
+    err = processConfigJsonBamV1(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing BAM V2 settings")
+    err = processConfigJsonBamV2(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing filter settings")
+    err = processConfigJsonFilters(&job, &bam)
+    if err != nil { return }
+  }
   return
 }
 
 // Used internally. Process "output" section.
-func processConfigJsonOutput(input *JsonGenerator, config *BamConfig) error {
+func processConfigJsonOutput(input *JsonJob, config *BamConfig) error {
   (*config)[SECTION_OUTPUT] = make(BamMap)
 
   var intVal int64
@@ -150,7 +163,7 @@ func processConfigJsonOutput(input *JsonGenerator, config *BamConfig) error {
 }
 
 // Used internally. Process "input" section.
-func processConfigJsonInput(input *JsonGenerator, config *BamConfig) error {
+func processConfigJsonInput(input *JsonJob, config *BamConfig) error {
   (*config)[SECTION_INPUT] = make(BamMap)
 
   static := input.Input.Static
@@ -202,7 +215,7 @@ func processConfigJsonInput(input *JsonGenerator, config *BamConfig) error {
 }
 
 // Used internally. Process "settings" section.
-func processConfigJsonSettings(input *JsonGenerator, config *BamConfig) error {
+func processConfigJsonSettings(input *JsonJob, config *BamConfig) error {
   (*config)[SECTION_SETTINGS] = make(BamMap)
 
   var size int
@@ -232,7 +245,7 @@ func processConfigJsonSettings(input *JsonGenerator, config *BamConfig) error {
 }
 
 // Used internally. Process "bamv1" section.
-func processConfigJsonBamV1(input *JsonGenerator, config *BamConfig) error {
+func processConfigJsonBamV1(input *JsonJob, config *BamConfig) error {
   (*config)[SECTION_BAMV1] = make(BamMap)
 
   var boolVal bool
@@ -330,7 +343,7 @@ func processConfigJsonBamV1(input *JsonGenerator, config *BamConfig) error {
 }
 
 // Used internally. Process "bamv2" section.
-func processConfigJsonBamV2(input *JsonGenerator, config *BamConfig) error {
+func processConfigJsonBamV2(input *JsonJob, config *BamConfig) error {
   (*config)[SECTION_BAMV2] = make(BamMap)
 
   var intVal int64
@@ -361,7 +374,7 @@ func processConfigJsonBamV2(input *JsonGenerator, config *BamConfig) error {
   return nil
 }
 
-func processConfigJsonFilters(input *JsonGenerator, config *BamConfig) error {
+func processConfigJsonFilters(input *JsonJob, config *BamConfig) error {
   (*config)[SECTION_FILTERS] = make(BamMap)
 
   // process filters sequentially

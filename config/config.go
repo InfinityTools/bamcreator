@@ -76,7 +76,7 @@ type BamConfig map[string]BamMap
 
 
 // ImportConfig constructs a BamConfig object from configuration data found in the source wrapped by the Reader object.
-func ImportConfig(r io.Reader) (config *BamConfig, err error) {
+func ImportConfig(r io.Reader) (config []*BamConfig, err error) {
   // reading XML data into byte buffer
   logging.Logln("Loading configuration data")
   buffer := make([]byte, 1024)

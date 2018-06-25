@@ -72,17 +72,31 @@ func main() {
 
 
 func convert() error {
+  jobs := make([]*config.BamConfig, 0)
+
+  logging.Logln("Loading configurations")
   length := argsExtraLength()
   for idx := 0; idx < length; idx++ {
     configFile := argsExtra(idx)
     if len(configFile) == 0 { continue }  // should not happen
     if configFile == "-" {
-      logging.Infof("Starting job %d: (standard input)\n", idx)
+      logging.Logf("Parsing configuration %d from standard input\n", idx)
     } else {
-      logging.Infof("Starting job %d: %s\n", idx, configFile)
+      logging.Logf("Parsing configuration %d from %s\n", idx, configFile)
     }
-    err := convertJob(configFile)
-    if err != nil { return fmt.Errorf("Job %d: %v", idx, err) }
+    j, err := getJobs(configFile)
+    if err != nil {
+      if configFile == "-" { configFile = "standard input" }
+      return fmt.Errorf("Loading jobs from %s: %v", configFile, err)
+    }
+    jobs = append(jobs, j...)
+  }
+  logging.Logf("Finished loading %d configuration(s)\n", len(jobs))
+
+  for idx, job := range jobs {
+    logging.Infof("Starting job %d\n", idx)
+    err := generateBAM(job)
+    if err != nil { return err }
     logging.Infof("Finished job %d\n", idx)
   }
 
@@ -90,31 +104,30 @@ func convert() error {
 }
 
 
-func convertJob(configFile string) error {
+func getJobs(configFile string) (cfg []*config.BamConfig, err error) {
   // consistency checks
   isStdIn := configFile == "-"
   if !isStdIn {
-    fi, err := os.Stat(configFile)
-    if err != nil { return err }
-    if !fi.Mode().IsRegular() { return fmt.Errorf("File not found: %q", configFile) }
+    var fi os.FileInfo
+    fi, err = os.Stat(configFile)
+    if err != nil { return }
+    if !fi.Mode().IsRegular() { err = fmt.Errorf("File not found: %q", configFile); return }
   }
 
   var r io.Reader = nil
   if isStdIn {
     r = os.Stdin
   } else {
-    fin, err := os.Open(configFile)
-    if err != nil { return fmt.Errorf("Cannot open %q: %v", configFile, err) }
+    var fin *os.File
+    fin, err = os.Open(configFile)
+    if err != nil { err = fmt.Errorf("Cannot open %q: %v", configFile, err); return }
     defer fin.Close()
     r = fin
   }
-  cfg, err := config.ImportConfig(r)
-  if err != nil { return fmt.Errorf("Error parsing configuration: %v", err) }
+  cfg, err = config.ImportConfig(r)
+  if err != nil { err = fmt.Errorf("Error parsing configuration: %v", err); return }
 
-  err = generateBAM(cfg)
-  if err != nil { return err }
-
-  return nil
+  return
 }
 
 

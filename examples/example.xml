@@ -5,217 +5,221 @@
      Instead, 0, 0.0, false, empty string or empty list will be used in most cases, depending on option type.
 -->
 <generator>
-    <output>
-        <!-- BAM output version: 1 = BAM V1, 2 = BAM V2. Can be overridden by command line parameter. Default: 1 -->
-        <version>1</version>
-        <!-- BAM output file with path. Can be overridden by command line parameter. Default: default.bam -->
-        <file>default.bam</file>
-        <!-- Optional PVRZ output path. This option is only relevant when converting to BAM V2.
-             Can be overridden by command line parameter. Default: same path as BAM output file. -->
-        <pvrzpath></pvrzpath>
-    </output>
+    <!-- A job defines a single BAM conversion operation. You can add multiple jobs to a single configuration file or
+         pass multiple configuration files with single or multiple jobs to the BAM Creator. -->
+    <job>
+        <output>
+            <!-- BAM output version: 1 = BAM V1, 2 = BAM V2. Can be overridden by command line parameter. Default: 1 -->
+            <version>1</version>
+            <!-- BAM output file with path. Can be overridden by command line parameter. Default: default.bam -->
+            <file>default.bam</file>
+            <!-- Optional PVRZ output path. This option is only relevant when converting to BAM V2.
+                 Can be overridden by command line parameter. Default: same path as BAM output file. -->
+            <pvrzpath></pvrzpath>
+        </output>
 
-    <!-- The input file section. Supported image formats: BAM (frames only), BMP, GIF, JPG and PNG. -->
-    <input>
-        <!-- Indicates whether to use a static list of files. Set to false to use a file sequence defined by parameters
-             instead. Default: true
-             Note: Boolean values accept the keywords "true" and "false" as well as 0 for "false" or any non-zero
-                   number for "true". -->
-        <static>true</static>
-        <!-- List of static file paths. Ignored if "static" is set to "false".
-             Note: For input files that may contain multiple frames (e.g. GIF or BAM) you can specify which frame to
-                   import by appending the frame index to the path name, separated by a colon. A second index separated
-                   by colon defines the upper bound (exclusive) of a range of frames.
-                   Examples:
-                   Load all BAM frames: ./input/files/example.bam
-                   Load only BAM frame at index 2: ./input/files/example.bam:2
-                   Load only BAM frames at index 2 to 5: ./input/files/example.bam:2:6 -->
-        <files>
-            <path>./input/files/input00.png</path>
-            <path>./input/files/input01.png</path>
-            <path>./input/files/input02.gif:1:3</path>
-        </files>
-        <!-- Set of parameters to generate a sequence of input files. Ignored if "static" is set to "true". -->
-        <filesequence>
-            <!-- Path to input graphics files. Empty means current directory. -->
-            <path>./input/files</path>
-            <!-- An optional filename prefix. -->
-            <prefix>input</prefix>
-            <!-- Start index of numeric BMP filename suffix. Default: 0 -->
-            <suffixstart>0</suffixstart>
-            <!-- End index (inclusive) of numeric BMP filename suffix. To count downwards specify a value lower than
-                 suffix start. Default: 0 -->
-            <suffixend>63</suffixend>
-            <!-- Minimum length of suffix. May be prepended by '0' characters to reach minimum size. Default: 1 -->
-            <suffixlength>2</suffixlength>
-            <!-- Input filename extension. -->
-            <ext>bmp</ext>
-        </filesequence>
-        <!-- Zero, one or more search paths that are used to locate auxiliary files, such as PVRZ files associated
-             with BAM V2 files. An empty path definition indicates to search the same path as the graphics file.
-             Default: same path as input file. -->
-        <search>
-          <path></path>
-          <path>./input/files</path>
-        </search>
-    </input>
+        <!-- The input file section. Supported image formats: BAM (frames only), BMP, GIF, JPG and PNG. -->
+        <input>
+            <!-- Indicates whether to use a static list of files. Set to false to use a file sequence defined by parameters
+                 instead. Default: true
+                 Note: Boolean values accept the keywords "true" and "false" as well as 0 for "false" or any non-zero
+                       number for "true". -->
+            <static>true</static>
+            <!-- List of static file paths. Ignored if "static" is set to "false".
+                 Note: For input files that may contain multiple frames (e.g. GIF or BAM) you can specify which frame to
+                       import by appending the frame index to the path name, separated by a colon. A second index separated
+                       by colon defines the upper bound (exclusive) of a range of frames.
+                       Examples:
+                       Load all BAM frames: ./input/files/example.bam
+                       Load only BAM frame at index 2: ./input/files/example.bam:2
+                       Load only BAM frames at index 2 to 5: ./input/files/example.bam:2:6 -->
+            <files>
+                <path>./input/files/input00.png</path>
+                <path>./input/files/input01.png</path>
+                <path>./input/files/input02.gif:1:3</path>
+            </files>
+            <!-- Set of parameters to generate a sequence of input files. Ignored if "static" is set to "true". -->
+            <filesequence>
+                <!-- Path to input graphics files. Empty means current directory. -->
+                <path>./input/files</path>
+                <!-- An optional filename prefix. -->
+                <prefix>input</prefix>
+                <!-- Start index of numeric BMP filename suffix. Default: 0 -->
+                <suffixstart>0</suffixstart>
+                <!-- End index (inclusive) of numeric BMP filename suffix. To count downwards specify a value lower than
+                     suffix start. Default: 0 -->
+                <suffixend>63</suffixend>
+                <!-- Minimum length of suffix. May be prepended by '0' characters to reach minimum size. Default: 1 -->
+                <suffixlength>2</suffixlength>
+                <!-- Input filename extension. -->
+                <ext>bmp</ext>
+            </filesequence>
+            <!-- Zero, one or more search paths that are used to locate auxiliary files, such as PVRZ files associated
+                 with BAM V2 files. An empty path definition indicates to search the same path as the graphics file.
+                 Default: same path as input file. -->
+            <search>
+              <path></path>
+              <path>./input/files</path>
+            </search>
+        </input>
 
-    <!-- General BAM settings -->
-    <settings>
-        <!-- List of frame center locations in the form "x,y". If less center entries than frames are defined, then
-             last center definition will be used for remaining frames. May be omitted for input files of type BAM that
-             provide their own center coordinates.
-             Default: 0,0 for all frames, unless overridden by input file. -->
-        <center>16,-21</center>
-        <center>0,0</center>
-        <!-- Definition of BAM sequences. Each sequence must contain one or more comma-separated frame indices.
-             Default: single sequence containing frame index 0 -->
-        <sequence>0,1,2,3,4</sequence>
-        <sequence>5,6,7,8,9</sequence>
-    </settings>
+        <!-- General BAM settings -->
+        <settings>
+            <!-- List of frame center locations in the form "x,y". If less center entries than frames are defined, then
+                 last center definition will be used for remaining frames. May be omitted for input files of type BAM that
+                 provide their own center coordinates.
+                 Default: 0,0 for all frames, unless overridden by input file. -->
+            <center>16,-21</center>
+            <center>0,0</center>
+            <!-- Definition of BAM sequences. Each sequence must contain one or more comma-separated frame indices.
+                 Default: single sequence containing frame index 0 -->
+            <sequence>0,1,2,3,4</sequence>
+            <sequence>5,6,7,8,9</sequence>
+        </settings>
 
-    <!-- BAM V1 specific settings -->
-    <bamv1>
-        <!-- Whether to create a compressed BAMC V1 file. Can be overridden by command line parameter. Default: true -->
-        <compress>true</compress>
-        <!-- Defines RLE compression of transparent color in BAM frames. Set to 0 to disable RLE compression. Set to
-             positive value to enforce RLE compression. Set to negative value to apply RLE compression only if it
-             reduces data size. Can be overridden by command line parameter. Default: -1 -->
-        <rle>-1</rle>
-        <!-- Whether to preserve alpha part of BAM palette entries. Can be overridden by command line parameter.
-             Default: true -->
-        <alpha>true</alpha>
-        <!-- Both quality settings must be in range [0, 100] and define how well colors will match the output palette. 
-             0 is worst quality, 100 is best quality. The quantization process will fail if 256 colors are not enough
-             to meet minimum quality. Quality 0 will always succeed. Can be overridden by command line parameters.
-             Default: min=80, max=100 -->
-        <qualitymin>80</qualitymin>
-        <qualitymax>100</qualitymax>
-        <!-- Speed must be in range [1, 10] and influences how efficient output images will apply the generated
-             palette. Can be overridden by command line parameter.
-             Speed 1 gives marginally better quality at significant CPU cost. Speed 10 is usually 5% lower quality,
-             but is 8 times faster than default.
-             Caution: High speeds combined with high quality will use more colors than necessary and will be less
-             likely to meet minimum required quality.
-             Features dependent on speed:
-               Noise-sensitive dithering speed      1 to 5
-               Forced posterization                 8-10 or if image has more than million colors
-               Quantization error known             1-7 or if minimum quality is set
-               Additional quantization techniques   1-6
-             Default: 3 -->
-        <speed>3</speed>
-        <!-- Specify whether to dither the output graphics. Value must be in range [0.0, 1.0]. Set to 0 to disable
-             dithering. Can be overridden by command line parameter. Default: 0.0 -->
-        <dither>0.0</dither>
-        <!-- Treat this color as transparent when encountered in input frames. It can be used as an option if the input
-             image format does not support transparency. Does nothing if "usetransparency" is set to false.
-             Default: green / RGBA(0,255,0,255)-->
-        <transcolor>0,255,0,255</transcolor>  <!-- RGBA(0, 255, 0, 255) - opaque green -->
-        <!-- Indicates whether the color defined by "transcolor" will be treated as transparent in the resulting BAM V1
-             file. Can be overridden by command line parameter. Default: false -->
-        <usetranscolor>false</usetranscolor>
-        <!-- Specify whether to sort the palette of the resulting BAM file. Fixed color entries or external palettes
-             are not affected by the sort operation. Choose one of the following criteria:
-               none         Do not sort (default).
-               lightness    Sort by lightness.
-               saturation   Sort by saturation.
-               hue          Sort by hue.
-               red          Sort by red intensity.
-               green        Sort by green intensity.
-               blue         Sort by blue intensity.
-               alpha        Sort by alpha.
-               Add suffix "_reversed" to sort in reversed order, e.g. hue_reversed sorts hue in reversed order. -->
-        <sortby>none</sortby>
-        <!-- An optional list of predefined palette entries. Values are either defined as array of blue, green, red,
-             and optional alpha, or as a single decimal or hexadecimal value of component order 0xAARRGGBB. Use alpha
-             in range [1, 255]. Color entries with alpha=0 will always be remapped to palette index 0. Up to 255 color
-             entries will be considered. A fully transparent color will always be added implicitly. -->
-        <color>
-            <entry>0xff000000</entry>       <!-- RGBA(0, 0, 0, 255) - opaque black -->
-            <entry>0,128,255</entry>        <!-- RGBA(255, 128, 0, 255) - using implicit alpha=255 -->
-            <entry>128,128,128,128</entry>  <!-- RGBA(128, 128, 128, 128) -->
-        </color>
-        <!-- Setting this value to true instructs the converter to use the color table from the file specified in the
-             palette field below. This setting overrides the following color-related BAM V1 options: fixed color
-             entries (color>entry), sortby, qualitymin, qualitymax and speed. Default: false -->
-        <usepalette>false</usepalette>
-        <!-- Path to optional external palette. Palette can be imported from BAM, BMP, GIF and PNG graphics, as well as
-             Windows Palette files (*.pal) and Adobe Color Tables (*.act). Can be overridden by command line parameter.
-         -->
-        <palette>./path/to/palette.pal</palette>
-    </bamv1>
+        <!-- BAM V1 specific settings -->
+        <bamv1>
+            <!-- Whether to create a compressed BAMC V1 file. Can be overridden by command line parameter. Default: true -->
+            <compress>true</compress>
+            <!-- Defines RLE compression of transparent color in BAM frames. Set to 0 to disable RLE compression. Set to
+                 positive value to enforce RLE compression. Set to negative value to apply RLE compression only if it
+                 reduces data size. Can be overridden by command line parameter. Default: -1 -->
+            <rle>-1</rle>
+            <!-- Whether to preserve alpha part of BAM palette entries. Can be overridden by command line parameter.
+                 Default: true -->
+            <alpha>true</alpha>
+            <!-- Both quality settings must be in range [0, 100] and define how well colors will match the output palette. 
+                 0 is worst quality, 100 is best quality. The quantization process will fail if 256 colors are not enough
+                 to meet minimum quality. Quality 0 will always succeed. Can be overridden by command line parameters.
+                 Default: min=80, max=100 -->
+            <qualitymin>80</qualitymin>
+            <qualitymax>100</qualitymax>
+            <!-- Speed must be in range [1, 10] and influences how efficient output images will apply the generated
+                 palette. Can be overridden by command line parameter.
+                 Speed 1 gives marginally better quality at significant CPU cost. Speed 10 is usually 5% lower quality,
+                 but is 8 times faster than default.
+                 Caution: High speeds combined with high quality will use more colors than necessary and will be less
+                 likely to meet minimum required quality.
+                 Features dependent on speed:
+                   Noise-sensitive dithering speed      1 to 5
+                   Forced posterization                 8-10 or if image has more than million colors
+                   Quantization error known             1-7 or if minimum quality is set
+                   Additional quantization techniques   1-6
+                 Default: 3 -->
+            <speed>3</speed>
+            <!-- Specify whether to dither the output graphics. Value must be in range [0.0, 1.0]. Set to 0 to disable
+                 dithering. Can be overridden by command line parameter. Default: 0.0 -->
+            <dither>0.0</dither>
+            <!-- Treat this color as transparent when encountered in input frames. It can be used as an option if the input
+                 image format does not support transparency. Does nothing if "usetransparency" is set to false.
+                 Default: green / RGBA(0,255,0,255)-->
+            <transcolor>0,255,0,255</transcolor>  <!-- RGBA(0, 255, 0, 255) - opaque green -->
+            <!-- Indicates whether the color defined by "transcolor" will be treated as transparent in the resulting BAM V1
+                 file. Can be overridden by command line parameter. Default: false -->
+            <usetranscolor>false</usetranscolor>
+            <!-- Specify whether to sort the palette of the resulting BAM file. Fixed color entries or external palettes
+                 are not affected by the sort operation. Choose one of the following criteria:
+                   none         Do not sort (default).
+                   lightness    Sort by lightness.
+                   saturation   Sort by saturation.
+                   hue          Sort by hue.
+                   red          Sort by red intensity.
+                   green        Sort by green intensity.
+                   blue         Sort by blue intensity.
+                   alpha        Sort by alpha.
+                   Add suffix "_reversed" to sort in reversed order, e.g. hue_reversed sorts hue in reversed order. -->
+            <sortby>none</sortby>
+            <!-- An optional list of predefined palette entries. Values are either defined as array of blue, green, red,
+                 and optional alpha, or as a single decimal or hexadecimal value of component order 0xAARRGGBB. Use alpha
+                 in range [1, 255]. Color entries with alpha=0 will always be remapped to palette index 0. Up to 255 color
+                 entries will be considered. A fully transparent color will always be added implicitly. -->
+            <color>
+                <entry>0xff000000</entry>       <!-- RGBA(0, 0, 0, 255) - opaque black -->
+                <entry>0,128,255</entry>        <!-- RGBA(255, 128, 0, 255) - using implicit alpha=255 -->
+                <entry>128,128,128,128</entry>  <!-- RGBA(128, 128, 128, 128) -->
+            </color>
+            <!-- Setting this value to true instructs the converter to use the color table from the file specified in the
+                 palette field below. This setting overrides the following color-related BAM V1 options: fixed color
+                 entries (color>entry), sortby, qualitymin, qualitymax and speed. Default: false -->
+            <usepalette>false</usepalette>
+            <!-- Path to optional external palette. Palette can be imported from BAM, BMP, GIF and PNG graphics, as well as
+                 Windows Palette files (*.pal) and Adobe Color Tables (*.act). Can be overridden by command line parameter.
+             -->
+            <palette>./path/to/palette.pal</palette>
+        </bamv1>
 
-    <!-- BAM V2 specific settings -->
-    <bamv2>
-      <!-- The PVRZ start index. BAM V2 files refer to MOSxxxx.PVRZ files where xxxx is a numeric value in range
-           [0, 99999]. 
-           Important: Maximum PVRZ index applies to all PVRZ files generation during BAM conversion. Can be overridden
-           by command line parameter. Default: 1000 -->
-      <startindex>1000</startindex>
-      <!-- The PVRZ encoding type. Can be overridden by command line parameter.
-           Supported types:
-             0:   Determine automatically based on input data
-             1:   Enforce DXT1 (full transparency only, supported by EE games)
-             2:   Enforce DXT3 (uses discrete alpha values, currently not supported by EE games)
-             3:   Enforce DXT5 (uses blended alpha values, supported by EE games)
-           Default: 0 -->
-      <encoding>0</encoding>
-      <!-- When using encoding type 0 (auto) this is the alpha threshold (in percent) that has to be exceeded before
-           the encoder switches to an encoding type that explicitly supports alpha. Supported range is [0.0, 100.0]
-           where 0.0 considers all non-transparent alpha and 100.0 considers no non-transparent alpha at all,
-           i.e. equivalent to encoding type 1 (DXT1). Can be overridden by command line parameter. Default: 5.0 -->
-      <threshold>5.0</threshold>
-      <!-- Encoding-specific quality setting in range [0, 2] where 0 is lowest and 2 is highest. The actual result
-           depends on the chosen encoding type. Can be overridden by command line parameter. Default: 1 -->
-      <quality>1</quality>
-      <!-- Enable to weight pixels by their alpha value to improve visual quality. Can be overridden by command line
-           parameter. Default: true -->
-      <weightalpha>true</weightalpha>
-      <!-- Set to true to apply a perceptual matrix, which may improve visual quality. Can be overridden by command
-           line parameter. Default: false -->
-      <usemetric>false</usemetric>
-    </bamv2>
+        <!-- BAM V2 specific settings -->
+        <bamv2>
+          <!-- The PVRZ start index. BAM V2 files refer to MOSxxxx.PVRZ files where xxxx is a numeric value in range
+               [0, 99999]. 
+               Important: Maximum PVRZ index applies to all PVRZ files generation during BAM conversion. Can be overridden
+               by command line parameter. Default: 1000 -->
+          <startindex>1000</startindex>
+          <!-- The PVRZ encoding type. Can be overridden by command line parameter.
+               Supported types:
+                 0:   Determine automatically based on input data
+                 1:   Enforce DXT1 (full transparency only, supported by EE games)
+                 2:   Enforce DXT3 (uses discrete alpha values, currently not supported by EE games)
+                 3:   Enforce DXT5 (uses blended alpha values, supported by EE games)
+               Default: 0 -->
+          <encoding>0</encoding>
+          <!-- When using encoding type 0 (auto) this is the alpha threshold (in percent) that has to be exceeded before
+               the encoder switches to an encoding type that explicitly supports alpha. Supported range is [0.0, 100.0]
+               where 0.0 considers all non-transparent alpha and 100.0 considers no non-transparent alpha at all,
+               i.e. equivalent to encoding type 1 (DXT1). Can be overridden by command line parameter. Default: 5.0 -->
+          <threshold>5.0</threshold>
+          <!-- Encoding-specific quality setting in range [0, 2] where 0 is lowest and 2 is highest. The actual result
+               depends on the chosen encoding type. Can be overridden by command line parameter. Default: 1 -->
+          <quality>1</quality>
+          <!-- Enable to weight pixels by their alpha value to improve visual quality. Can be overridden by command line
+               parameter. Default: true -->
+          <weightalpha>true</weightalpha>
+          <!-- Set to true to apply a perceptual matrix, which may improve visual quality. Can be overridden by command
+               line parameter. Default: false -->
+          <usemetric>false</usemetric>
+        </bamv2>
 
-    <!-- Filter definitions that can be applied to the output frames. This section is optional. Order of definition
-         is relevant. -->
-    <filters>
-      <!-- A new filter definition. -->
-      <filter>
-        <!-- The filter name. Choose from the list of available filters. Unknown filters are ignored. This field is
-             mandatory. -->
-        <name>brightness</name>
-        <!-- A filter-specific option. You can define zero, one or more options. Options can be overridden by command
-             line parameters. -->
-        <option>
-          <!-- The option name. -->
-          <key>Level</key>
-          <!-- The option value. Type is option-dependent. -->
-          <value>1.5</value>
-        </option>
-      </filter>
-      <!-- A second filter with multiple options. It will be applied after the first filter. -->
-      <filter>
-        <name>canvas</name>
-        <option>
-          <key>Trim</key>
-          <value>true</value>
-        </option>
-        <option>
-          <key>MinWidth</key>
-          <value>200</value>
-        </option>
-        <option>
-          <key>MinHeight</key>
-          <value>200</value>
-        </option>
-        <option>
-          <key>HorizontalAlign</key>
-          <value>center</value>
-        </option>
-        <option>
-          <key>VerticalAlign</key>
-          <value>center</value>
-        </option>
-      </filter>
-    </filters>
+        <!-- Filter definitions that can be applied to the output frames. This section is optional. Order of definition
+             is relevant. -->
+        <filters>
+          <!-- A new filter definition. -->
+          <filter>
+            <!-- The filter name. Choose from the list of available filters. Unknown filters are ignored. This field is
+                 mandatory. -->
+            <name>brightness</name>
+            <!-- A filter-specific option. You can define zero, one or more options. Options can be overridden by command
+                 line parameters. -->
+            <option>
+              <!-- The option name. -->
+              <key>Level</key>
+              <!-- The option value. Type is option-dependent. -->
+              <value>1.5</value>
+            </option>
+          </filter>
+          <!-- A second filter with multiple options. It will be applied after the first filter. -->
+          <filter>
+            <name>canvas</name>
+            <option>
+              <key>Trim</key>
+              <value>true</value>
+            </option>
+            <option>
+              <key>MinWidth</key>
+              <value>200</value>
+            </option>
+            <option>
+              <key>MinHeight</key>
+              <value>200</value>
+            </option>
+            <option>
+              <key>HorizontalAlign</key>
+              <value>center</value>
+            </option>
+            <option>
+              <key>VerticalAlign</key>
+              <value>center</value>
+            </option>
+          </filter>
+        </filters>
+    </job>
 </generator>

@@ -80,9 +80,8 @@ type XmlFilter struct {
   Options       []XmlFilterOption   `xml:"option"`
 }
 
-// Used internally by xml.Unmarshal to store configuration data from XML scripts.
-type XmlGenerator struct {
-  XMLName       xml.Name        `xml:"generator"`
+// Used internally by xml.Unmarshal to store a single conversion job.
+type XmlJob struct {
   Output        XmlOutput       `xml:"output"`
   Input         XmlInput        `xml:"input"`
   Settings      XmlSettings     `xml:"settings"`
@@ -91,9 +90,15 @@ type XmlGenerator struct {
   Filters       []XmlFilter     `xml:"filters>filter"`
 }
 
+// Used internally by xml.Unmarshal to store configuration data from XML scripts.
+type XmlGenerator struct {
+  XMLName       xml.Name        `xml:"generator"`
+  Jobs          []XmlJob        `xml:"job"`
+}
+
 
 // Used internally. Parses XML source into intermediate structures.
-func importXml(buffer []byte) (config *BamConfig, err error) {
+func importXml(buffer []byte) (config []*BamConfig, err error) {
   xmlGenerator := XmlGenerator{}
   err = xml.Unmarshal(buffer, &xmlGenerator)
   if err != nil { return }
@@ -104,31 +109,38 @@ func importXml(buffer []byte) (config *BamConfig, err error) {
 
 
 // Used internally. Converts parsed XML input into useful data types, taking defaults into account for omitted input.
-func processConfigXml(input *XmlGenerator) (config *BamConfig, err error) {
-  bam := make(BamConfig)
-  config = &bam
-  logging.Logln("Processing output settings")
-  err = processConfigXmlOutput(input, config)
-  if err != nil { return }
-  logging.Logln("Processing input settings")
-  err = processConfigXmlInput(input, config)
-  if err != nil { return }
-  logging.Logln("Processing BAM settings")
-  err = processConfigXmlSettings(input, config)
-  if err != nil { return }
-  logging.Logln("Processing BAM V1 settings")
-  err = processConfigXmlBamV1(input, config)
-  if err != nil { return }
-  logging.Logln("Processing BAM V2 settings")
-  err = processConfigXmlBamV2(input, config)
-  if err != nil { return }
-  logging.Logln("Processing filter settings")
-  err = processConfigXmlFilters(input, config)
+func processConfigXml(input *XmlGenerator) (config []*BamConfig, err error) {
+  config = make([]*BamConfig, 0)
+  if input == nil { err = fmt.Errorf("No XML configuration data specified"); return }
+
+  for idx, job := range input.Jobs {
+    logging.Logf("Processing job %d\n", idx)
+    bam := make(BamConfig)
+    config = append(config, &bam)
+    logging.Logln("Processing output settings")
+    err = processConfigXmlOutput(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing input settings")
+    err = processConfigXmlInput(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing BAM settings")
+    err = processConfigXmlSettings(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing BAM V1 settings")
+    err = processConfigXmlBamV1(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing BAM V2 settings")
+    err = processConfigXmlBamV2(&job, &bam)
+    if err != nil { return }
+    logging.Logln("Processing filter settings")
+    err = processConfigXmlFilters(&job, &bam)
+    if err != nil { return }
+  }
   return
 }
 
 // Used internally. Process "output" section.
-func processConfigXmlOutput(input *XmlGenerator, config *BamConfig) error {
+func processConfigXmlOutput(input *XmlJob, config *BamConfig) error {
   (*config)[SECTION_OUTPUT] = make(BamMap)
 
   var intVal int64
@@ -150,7 +162,7 @@ func processConfigXmlOutput(input *XmlGenerator, config *BamConfig) error {
 }
 
 // Used internally. Process "input" section.
-func processConfigXmlInput(input *XmlGenerator, config *BamConfig) error {
+func processConfigXmlInput(input *XmlJob, config *BamConfig) error {
   (*config)[SECTION_INPUT] = make(BamMap)
 
   var static bool
@@ -200,7 +212,7 @@ func processConfigXmlInput(input *XmlGenerator, config *BamConfig) error {
 }
 
 // Used internally. Process "settings" section.
-func processConfigXmlSettings(input *XmlGenerator, config *BamConfig) error {
+func processConfigXmlSettings(input *XmlJob, config *BamConfig) error {
   (*config)[SECTION_SETTINGS] = make(BamMap)
 
   var size int
@@ -229,7 +241,7 @@ func processConfigXmlSettings(input *XmlGenerator, config *BamConfig) error {
 }
 
 // Used internally. Process "bamv1" section.
-func processConfigXmlBamV1(input *XmlGenerator, config *BamConfig) error {
+func processConfigXmlBamV1(input *XmlJob, config *BamConfig) error {
   (*config)[SECTION_BAMV1] = make(BamMap)
 
   var boolVal bool
@@ -322,7 +334,7 @@ func processConfigXmlBamV1(input *XmlGenerator, config *BamConfig) error {
 }
 
 // Used internally. Process "bamv2" section.
-func processConfigXmlBamV2(input *XmlGenerator, config *BamConfig) error {
+func processConfigXmlBamV2(input *XmlJob, config *BamConfig) error {
   (*config)[SECTION_BAMV2] = make(BamMap)
 
   var intVal int64
@@ -354,7 +366,7 @@ func processConfigXmlBamV2(input *XmlGenerator, config *BamConfig) error {
 }
 
 
-func processConfigXmlFilters(input *XmlGenerator, config *BamConfig) error {
+func processConfigXmlFilters(input *XmlJob, config *BamConfig) error {
   (*config)[SECTION_FILTERS] = make(BamMap)
 
   // process filters sequentially

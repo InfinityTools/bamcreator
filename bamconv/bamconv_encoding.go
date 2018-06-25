@@ -19,80 +19,82 @@ import (
 // Returns a pointer to a XmlGenerator structure initialized with the default values.
 func getDefaultXml() *config.XmlGenerator {
   xmlData := config.XmlGenerator{}
-  xmlData.Output.Version = "1"
-  xmlData.Output.File = "default.bam"
-  xmlData.Output.PvrzPath = ""
-  xmlData.Input.Static = "true"
-  xmlData.Input.Files = make([]string, 0)
-  xmlData.Input.Sequence.Path = ""
-  xmlData.Input.Sequence.Prefix = ""
-  xmlData.Input.Sequence.SuffixStart = "0"
-  xmlData.Input.Sequence.SuffixEnd = "0"
-  xmlData.Input.Sequence.SuffixLength = "1"
-  xmlData.Input.Sequence.Ext = ""
-  xmlData.Input.Search = make([]string, 0)
-  xmlData.Settings.Center = make([]string, 0)
-  xmlData.Settings.Sequence = make([]string, 0)
-  xmlData.BamV1.Compress = "true"
-  xmlData.BamV1.Rle = "-1"
-  xmlData.BamV1.Alpha = "true"
-  xmlData.BamV1.QualityMin = "80"
-  xmlData.BamV1.QualityMax = "100"
-  xmlData.BamV1.Speed = "3"
-  xmlData.BamV1.Dither = "0.0"
-  xmlData.BamV1.FixedColors = make([]string, 0)
-  xmlData.BamV1.TransColor = "0xff00ff00"
-  xmlData.BamV1.UseTransColor = "false"
-  xmlData.BamV1.SortBy = "none"
-  xmlData.BamV1.UsePalette = "false"
-  xmlData.BamV1.Palette = ""
-  xmlData.BamV2.StartIndex = "1000"
-  xmlData.BamV2.Encoding = "0"
-  xmlData.BamV2.Threshold = "5.0"
-  xmlData.BamV2.Quality = "1"
-  xmlData.BamV2.WeightAlpha = "true"
-  xmlData.BamV2.UseMetric = "false"
-  xmlData.Filters = make([]config.XmlFilter, 0)
+  xmlData.Jobs = make([]config.XmlJob, 1)
+  xmlData.Jobs[0].Output.Version = "1"
+  xmlData.Jobs[0].Output.File = "default.bam"
+  xmlData.Jobs[0].Output.PvrzPath = ""
+  xmlData.Jobs[0].Input.Static = "true"
+  xmlData.Jobs[0].Input.Files = make([]string, 0)
+  xmlData.Jobs[0].Input.Sequence.Path = ""
+  xmlData.Jobs[0].Input.Sequence.Prefix = ""
+  xmlData.Jobs[0].Input.Sequence.SuffixStart = "0"
+  xmlData.Jobs[0].Input.Sequence.SuffixEnd = "0"
+  xmlData.Jobs[0].Input.Sequence.SuffixLength = "1"
+  xmlData.Jobs[0].Input.Sequence.Ext = ""
+  xmlData.Jobs[0].Input.Search = make([]string, 0)
+  xmlData.Jobs[0].Settings.Center = make([]string, 0)
+  xmlData.Jobs[0].Settings.Sequence = make([]string, 0)
+  xmlData.Jobs[0].BamV1.Compress = "true"
+  xmlData.Jobs[0].BamV1.Rle = "-1"
+  xmlData.Jobs[0].BamV1.Alpha = "true"
+  xmlData.Jobs[0].BamV1.QualityMin = "80"
+  xmlData.Jobs[0].BamV1.QualityMax = "100"
+  xmlData.Jobs[0].BamV1.Speed = "3"
+  xmlData.Jobs[0].BamV1.Dither = "0.0"
+  xmlData.Jobs[0].BamV1.FixedColors = make([]string, 0)
+  xmlData.Jobs[0].BamV1.TransColor = "0xff00ff00"
+  xmlData.Jobs[0].BamV1.UseTransColor = "false"
+  xmlData.Jobs[0].BamV1.SortBy = "none"
+  xmlData.Jobs[0].BamV1.UsePalette = "false"
+  xmlData.Jobs[0].BamV1.Palette = ""
+  xmlData.Jobs[0].BamV2.StartIndex = "1000"
+  xmlData.Jobs[0].BamV2.Encoding = "0"
+  xmlData.Jobs[0].BamV2.Threshold = "5.0"
+  xmlData.Jobs[0].BamV2.Quality = "1"
+  xmlData.Jobs[0].BamV2.WeightAlpha = "true"
+  xmlData.Jobs[0].BamV2.UseMetric = "false"
+  xmlData.Jobs[0].Filters = make([]config.XmlFilter, 0)
   return &xmlData
 }
 
 // Returns a pointer to a JsonGenerator structure initialized with the default values.
 func getDefaultJson() *config.JsonGenerator {
   jsonData := config.JsonGenerator{}
-  jsonData.Output.Version = 1
-  jsonData.Output.File = "default.bam"
-  jsonData.Output.PvrzPath = ""
-  jsonData.Input.Static = true
-  jsonData.Input.Files = make([]string, 0)
-  jsonData.Input.Sequence.Path = ""
-  jsonData.Input.Sequence.Prefix = ""
-  jsonData.Input.Sequence.SuffixStart = 0
-  jsonData.Input.Sequence.SuffixEnd = 0
-  jsonData.Input.Sequence.SuffixLength = 1
-  jsonData.Input.Sequence.Ext = ""
-  jsonData.Input.Search = make([]string, 0)
-  jsonData.Settings.Center = make([][]int64, 0)
-  jsonData.Settings.Sequence = make([][]int64, 0)
-  jsonData.BamV1.Compress = true
-  jsonData.BamV1.Rle = -1
-  jsonData.BamV1.Alpha = true
-  jsonData.BamV1.QualityMin = 80
-  jsonData.BamV1.QualityMax = 100
-  jsonData.BamV1.Speed = 3
-  jsonData.BamV1.Dither = 0.0
-  jsonData.BamV1.FixedColors = make([]string, 0)
-  jsonData.BamV1.TransColor = "0xff00ff00"
-  jsonData.BamV1.UseTransColor = false
-  jsonData.BamV1.SortBy = "none"
-  jsonData.BamV1.UsePalette = false
-  jsonData.BamV1.Palette = ""
-  jsonData.BamV2.StartIndex = 1000
-  jsonData.BamV2.Encoding = 0
-  jsonData.BamV2.Threshold = 5.0
-  jsonData.BamV2.Quality = 1
-  jsonData.BamV2.WeightAlpha = true
-  jsonData.BamV2.UseMetric = false
-  jsonData.Filters = make([]config.JsonFilter, 0)
+  jsonData.Jobs = make([]config.JsonJob, 1)
+  jsonData.Jobs[0].Output.Version = 1
+  jsonData.Jobs[0].Output.File = "default.bam"
+  jsonData.Jobs[0].Output.PvrzPath = ""
+  jsonData.Jobs[0].Input.Static = true
+  jsonData.Jobs[0].Input.Files = make([]string, 0)
+  jsonData.Jobs[0].Input.Sequence.Path = ""
+  jsonData.Jobs[0].Input.Sequence.Prefix = ""
+  jsonData.Jobs[0].Input.Sequence.SuffixStart = 0
+  jsonData.Jobs[0].Input.Sequence.SuffixEnd = 0
+  jsonData.Jobs[0].Input.Sequence.SuffixLength = 1
+  jsonData.Jobs[0].Input.Sequence.Ext = ""
+  jsonData.Jobs[0].Input.Search = make([]string, 0)
+  jsonData.Jobs[0].Settings.Center = make([][]int64, 0)
+  jsonData.Jobs[0].Settings.Sequence = make([][]int64, 0)
+  jsonData.Jobs[0].BamV1.Compress = true
+  jsonData.Jobs[0].BamV1.Rle = -1
+  jsonData.Jobs[0].BamV1.Alpha = true
+  jsonData.Jobs[0].BamV1.QualityMin = 80
+  jsonData.Jobs[0].BamV1.QualityMax = 100
+  jsonData.Jobs[0].BamV1.Speed = 3
+  jsonData.Jobs[0].BamV1.Dither = 0.0
+  jsonData.Jobs[0].BamV1.FixedColors = make([]string, 0)
+  jsonData.Jobs[0].BamV1.TransColor = "0xff00ff00"
+  jsonData.Jobs[0].BamV1.UseTransColor = false
+  jsonData.Jobs[0].BamV1.SortBy = "none"
+  jsonData.Jobs[0].BamV1.UsePalette = false
+  jsonData.Jobs[0].BamV1.Palette = ""
+  jsonData.Jobs[0].BamV2.StartIndex = 1000
+  jsonData.Jobs[0].BamV2.Encoding = 0
+  jsonData.Jobs[0].BamV2.Threshold = 5.0
+  jsonData.Jobs[0].BamV2.Quality = 1
+  jsonData.Jobs[0].BamV2.WeightAlpha = true
+  jsonData.Jobs[0].BamV2.UseMetric = false
+  jsonData.Jobs[0].Filters = make([]config.JsonFilter, 0)
   return &jsonData
 }
 
@@ -105,62 +107,62 @@ func generateXml(w io.Writer, compact bool) error {
 
   // Adding options
   if v, x := argsBamVersion(); x {
-    data.Output.Version = strconv.Itoa(v)
+    data.Jobs[0].Output.Version = strconv.Itoa(v)
   }
   if s, x := argsBamOutput(); x {
-    data.Output.File = s
+    data.Jobs[0].Output.File = s
   }
   if s, x := argsBamPvrzPath(); x {
-    data.Output.PvrzPath = s
+    data.Jobs[0].Output.PvrzPath = s
   }
   if s, x := argsBamSearchPath(); x {
-    data.Input.Search = append(data.Input.Search, s)
+    data.Jobs[0].Input.Search = append(data.Jobs[0].Input.Search, s)
   }
   if b, x := argsBamV1Compress(); x {
-    data.BamV1.Compress = strconv.FormatBool(b)
+    data.Jobs[0].BamV1.Compress = strconv.FormatBool(b)
   }
   if v, x := argsBamV1Rle(); x {
-    data.BamV1.Rle = strconv.Itoa(v)
+    data.Jobs[0].BamV1.Rle = strconv.Itoa(v)
   }
   if b, x := argsBamV1Alpha(); x {
-    data.BamV1.Alpha = strconv.FormatBool(b)
+    data.Jobs[0].BamV1.Alpha = strconv.FormatBool(b)
   }
   if v, x := argsBamV1QualityMin(); x {
-    data.BamV1.QualityMin = strconv.Itoa(v)
+    data.Jobs[0].BamV1.QualityMin = strconv.Itoa(v)
   }
   if v, x := argsBamV1QualityMax(); x {
-    data.BamV1.QualityMax = strconv.Itoa(v)
+    data.Jobs[0].BamV1.QualityMax = strconv.Itoa(v)
   }
   if v, x := argsBamV1Speed(); x {
-    data.BamV1.Speed = strconv.Itoa(v)
+    data.Jobs[0].BamV1.Speed = strconv.Itoa(v)
   }
   if f, x := argsBamV1Dither(); x {
-    data.BamV1.Dither = strconv.FormatFloat(float64(f), 'f', -1, 32)
+    data.Jobs[0].BamV1.Dither = strconv.FormatFloat(float64(f), 'f', -1, 32)
   }
   if s, x := argsBamV1SortBy(); x {
-    data.BamV1.SortBy = s
+    data.Jobs[0].BamV1.SortBy = s
   }
   if s, x := argsBamV1Palette(); x {
-    data.BamV1.UsePalette = "true"
-    data.BamV1.Palette = s
+    data.Jobs[0].BamV1.UsePalette = "true"
+    data.Jobs[0].BamV1.Palette = s
   }
   if v, x := argsBamV2StartIndex(); x {
-    data.BamV2.StartIndex = strconv.Itoa(v)
+    data.Jobs[0].BamV2.StartIndex = strconv.Itoa(v)
   }
   if v, x := argsBamV2Encoding(); x {
-    data.BamV2.Encoding = strconv.Itoa(v)
+    data.Jobs[0].BamV2.Encoding = strconv.Itoa(v)
   }
   if f, x := argsBamV2Threshold(); x {
-    data.BamV2.Threshold = strconv.FormatFloat(float64(f), 'f', -1, 32)
+    data.Jobs[0].BamV2.Threshold = strconv.FormatFloat(float64(f), 'f', -1, 32)
   }
   if v, x := argsBamV2Quality(); x {
-    data.BamV2.Quality = strconv.Itoa(v)
+    data.Jobs[0].BamV2.Quality = strconv.Itoa(v)
   }
   if b, x := argsBamV2WeightAlpha(); x {
-    data.BamV2.WeightAlpha = strconv.FormatBool(b)
+    data.Jobs[0].BamV2.WeightAlpha = strconv.FormatBool(b)
   }
   if b, x := argsBamV2UseMetric(); x {
-    data.BamV2.UseMetric = strconv.FormatBool(b)
+    data.Jobs[0].BamV2.UseMetric = strconv.FormatBool(b)
   }
 
   // Adding filter definitions
@@ -171,7 +173,7 @@ func generateXml(w io.Writer, compact bool) error {
         for _, option := range filter.options {
           xmlFilter.Options = append(xmlFilter.Options, config.XmlFilterOption{Key: option.key, Value: option.value})
         }
-        data.Filters = append(data.Filters, xmlFilter)
+        data.Jobs[0].Filters = append(data.Jobs[0].Filters, xmlFilter)
       } else {
         logging.Logf("Filter %d not defined. Skipping.\n", i)
       }
@@ -188,14 +190,14 @@ func generateXml(w io.Writer, compact bool) error {
     // Preparing BAM input
     logging.Log("Parsing BAM files")
     bams := make([]*bam.BamFile, 0)
-    search := data.Input.Search
+    search := data.Jobs[0].Input.Search
     for i := 0; i < numBams; i++ {
       fileName := argsExtra(i)
       fin, err := os.Open(fileName)
       if err != nil { return fmt.Errorf("BAM file %q: %v", fileName, err) }
       defer fin.Close()
 
-      data.Input.Files = append(data.Input.Files, fileName)
+      data.Jobs[0].Input.Files = append(data.Jobs[0].Input.Files, fileName)
       var b *bam.BamFile = nil
       if len(search) > 0 {
         b = bam.ImportEx(fin, search)
@@ -217,7 +219,7 @@ func generateXml(w io.Writer, compact bool) error {
       // Adding centers
       if center {
         for i, cnt := 0, b.GetFrameLength(); i < cnt; i++ {
-          data.Settings.Center = append(data.Settings.Center, fmt.Sprintf("%d,%d", b.GetFrameCenterX(i), b.GetFrameCenterY(i)))
+          data.Jobs[0].Settings.Center = append(data.Jobs[0].Settings.Center, fmt.Sprintf("%d,%d", b.GetFrameCenterX(i), b.GetFrameCenterY(i)))
         }
       }
 
@@ -230,7 +232,7 @@ func generateXml(w io.Writer, compact bool) error {
           sb.WriteString(strconv.Itoa(int(j)+frameOffset))
         }
         if sb.Len() == 0 { sb.WriteString("0") }
-        data.Settings.Sequence = append(data.Settings.Sequence, sb.String())
+        data.Jobs[0].Settings.Sequence = append(data.Jobs[0].Settings.Sequence, sb.String())
       }
 
       // Adjusting frame index offset for next BAM
@@ -266,62 +268,62 @@ func generateJson(w io.Writer, compact bool) error {
 
   // Adding options
   if v, x := argsBamVersion(); x {
-    data.Output.Version = int64(v)
+    data.Jobs[0].Output.Version = int64(v)
   }
   if s, x := argsBamOutput(); x {
-    data.Output.File = s
+    data.Jobs[0].Output.File = s
   }
   if s, x := argsBamPvrzPath(); x {
-    data.Output.PvrzPath = s
+    data.Jobs[0].Output.PvrzPath = s
   }
   if s, x := argsBamSearchPath(); x {
-    data.Input.Search = append(data.Input.Search, s)
+    data.Jobs[0].Input.Search = append(data.Jobs[0].Input.Search, s)
   }
   if b, x := argsBamV1Compress(); x {
-    data.BamV1.Compress = b
+    data.Jobs[0].BamV1.Compress = b
   }
   if v, x := argsBamV1Rle(); x {
-    data.BamV1.Rle = int64(v)
+    data.Jobs[0].BamV1.Rle = int64(v)
   }
   if b, x := argsBamV1Alpha(); x {
-    data.BamV1.Alpha = b
+    data.Jobs[0].BamV1.Alpha = b
   }
   if v, x := argsBamV1QualityMin(); x {
-    data.BamV1.QualityMin = int64(v)
+    data.Jobs[0].BamV1.QualityMin = int64(v)
   }
   if v, x := argsBamV1QualityMax(); x {
-    data.BamV1.QualityMax = int64(v)
+    data.Jobs[0].BamV1.QualityMax = int64(v)
   }
   if v, x := argsBamV1Speed(); x {
-    data.BamV1.Speed = int64(v)
+    data.Jobs[0].BamV1.Speed = int64(v)
   }
   if f, x := argsBamV1Dither(); x {
-    data.BamV1.Dither = float64(f)
+    data.Jobs[0].BamV1.Dither = float64(f)
   }
   if s, x := argsBamV1SortBy(); x {
-    data.BamV1.SortBy = s
+    data.Jobs[0].BamV1.SortBy = s
   }
   if s, x := argsBamV1Palette(); x {
-    data.BamV1.UsePalette = true
-    data.BamV1.Palette = s
+    data.Jobs[0].BamV1.UsePalette = true
+    data.Jobs[0].BamV1.Palette = s
   }
   if v, x := argsBamV2StartIndex(); x {
-    data.BamV2.StartIndex = int64(v)
+    data.Jobs[0].BamV2.StartIndex = int64(v)
   }
   if v, x := argsBamV2Encoding(); x {
-    data.BamV2.Encoding = int64(v)
+    data.Jobs[0].BamV2.Encoding = int64(v)
   }
   if f, x := argsBamV2Threshold(); x {
-    data.BamV2.Threshold = float64(f)
+    data.Jobs[0].BamV2.Threshold = float64(f)
   }
   if v, x := argsBamV2Quality(); x {
-    data.BamV2.Quality = int64(v)
+    data.Jobs[0].BamV2.Quality = int64(v)
   }
   if b, x := argsBamV2WeightAlpha(); x {
-    data.BamV2.WeightAlpha = b
+    data.Jobs[0].BamV2.WeightAlpha = b
   }
   if b, x := argsBamV2UseMetric(); x {
-    data.BamV2.UseMetric = b
+    data.Jobs[0].BamV2.UseMetric = b
   }
 
   // Adding filter definitions
@@ -332,7 +334,7 @@ func generateJson(w io.Writer, compact bool) error {
         for _, option := range filter.options {
           jsonFilter.Options = append(jsonFilter.Options, config.JsonFilterOption{Key: option.key, Value: option.value})
         }
-        data.Filters = append(data.Filters, jsonFilter)
+        data.Jobs[0].Filters = append(data.Jobs[0].Filters, jsonFilter)
       } else {
         logging.Logf("Filter %d not defined. Skipping.\n", i)
       }
@@ -349,14 +351,14 @@ func generateJson(w io.Writer, compact bool) error {
     // Preparing BAM input
     logging.Log("Parsing BAM files")
     bams := make([]*bam.BamFile, 0)
-    search := data.Input.Search
+    search := data.Jobs[0].Input.Search
     for i := 0; i < numBams; i++ {
       fileName := argsExtra(i)
       fin, err := os.Open(fileName)
       if err != nil { return fmt.Errorf("BAM file %q: %v", fileName, err) }
       defer fin.Close()
 
-      data.Input.Files = append(data.Input.Files, fileName)
+      data.Jobs[0].Input.Files = append(data.Jobs[0].Input.Files, fileName)
       var b *bam.BamFile = nil
       if len(search) > 0 {
         b = bam.ImportEx(fin, search)
@@ -378,7 +380,7 @@ func generateJson(w io.Writer, compact bool) error {
       // Adding centers
       if center {
         for i, cnt := 0, b.GetFrameLength(); i < cnt; i++ {
-          data.Settings.Center = append(data.Settings.Center, []int64{int64(b.GetFrameCenterX(i)), int64(b.GetFrameCenterY(i))})
+          data.Jobs[0].Settings.Center = append(data.Jobs[0].Settings.Center, []int64{int64(b.GetFrameCenterX(i)), int64(b.GetFrameCenterY(i))})
         }
       }
 
@@ -390,7 +392,7 @@ func generateJson(w io.Writer, compact bool) error {
           c = append(c, int64(int(j)+frameOffset))
         }
         if len(c) == 0 { c = append(c, 0) }
-        data.Settings.Sequence = append(data.Settings.Sequence, c)
+        data.Jobs[0].Settings.Sequence = append(data.Jobs[0].Settings.Sequence, c)
       }
 
       // Adjusting frame index offset for next BAM
