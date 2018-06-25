@@ -347,7 +347,9 @@ func (bam *BamFile) decodeBamV1(buf *buffers.Buffer) {
   // decompress if needed
   if s == sig_bamc + ver_v1 {
     uncSize := int(buf.GetInt32(8))
-    if buf.DecompressReplace(12, buf.BufferLength() - 12) != uncSize { bam.err = errors.New("BAMC buffer size mismatch"); return }
+    uncSizeReal := buf.DecompressReplace(12, buf.BufferLength() - 12)
+    if buf.Error() != nil { bam.err = fmt.Errorf("Decompressing BAMC: %v", buf.Error()); return }
+    if uncSizeReal != uncSize { bam.err = fmt.Errorf("BAMC buffer size mismatch (want: %d, have: %d)", uncSize, uncSizeReal); return }
     if buf.Error() != nil { bam.err = buf.Error(); return }
     buf.DeleteBytes(0, 12)
     bam.bamV1.compress = true
