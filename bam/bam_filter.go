@@ -25,9 +25,10 @@ type BamFilter interface {
   // SetOption adds or updates an option of the given key to the filter. Return value indicates whether option is valid.
   SetOption(key, value string) error
   // Process applies the filter effect to the specified BAM frame and returns the transformed BAM frame.
+  // index indicates the frame index within the BAM. frame is the current BAM frame that is referred to by index.
   // inFrames contains list of frames from a previous filter pass or initial unfiltered frames. It can be used
   // by filters that gather statistical data from multiple frames in the BAM.
-  Process(frame BamFrame, inFrames []BamFrame) (BamFrame, error)
+  Process(index int, frame BamFrame, inFrames []BamFrame) (BamFrame, error)
 }
 
 type optionsMap map[string]interface{}
@@ -91,7 +92,7 @@ func (bam *BamFile) applyFilters(frames []BamFrame) (out []BamFrame, err error) 
         frm := inFrame
         err = pool.AddJob(g, func(pool threadpool.ThreadPool, erf func() error) error {
           if erf() != nil { return nil }
-          outFrame, err := filter.Process(frm, out)
+          outFrame, err := filter.Process(idx, frm, out)
           if err != nil {
             err = fmt.Errorf("Filter #%d (%s) at frame %d: %v", filterIdx, filter.GetName(), idx, err);
             return err
@@ -117,7 +118,7 @@ func (bam *BamFile) applyFilters(frames []BamFrame) (out []BamFrame, err error) 
       // Single-threaded operation
       for frameIdx, inFrame := range tmp {
         var outFrame BamFrame
-        outFrame, err = filter.Process(inFrame, out)
+        outFrame, err = filter.Process(frameIdx, inFrame, out)
         if err != nil {
           logging.OverridePrefix(false, false, false).Logln("")
           err = fmt.Errorf("Filter #%d (%s) at frame %d: %v", filterIdx, filter.GetName(), frameIdx, err)

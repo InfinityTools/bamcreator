@@ -79,7 +79,7 @@ func (f *FilterRotate) SetOption(key, value string) error {
 }
 
 // Process applies the filter effect to the specified BAM frame and returns the transformed BAM frame.
-func (f *FilterRotate) Process(frame BamFrame, inFrames []BamFrame) (BamFrame, error) {
+func (f *FilterRotate) Process(index int, frame BamFrame, inFrames []BamFrame) (BamFrame, error) {
   frameOut := BamFrame{cx: frame.cx, cy: frame.cy, img: nil}
   imgOut := cloneImage(frame.img, false)
   frameOut.img = imgOut
