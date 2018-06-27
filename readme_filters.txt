@@ -98,11 +98,14 @@ Alpha     A boolean value. Indicates whether to invert alpha intensity of a pixe
 
 
 9. Replace colors
-Description: A simple "search-and-replace" filter. It replaces all instances of "Match" by "Color" for each frame.
+Description: A simple "search-and-replace" filter. It replaces all instances of "Match" (within a given threshold)
+             by "Color" for each frame.
 Filter name: replace
 Filter options:
-Match     Specifies the color value to be replaced. Default: 0xff00ff00 (green)
-Color     Specifies the color value that should replace "match". Default: 0 (transparent)
+Match       Specifies the color value to be replaced. Default: 0xff00ff00 (green)
+Color       Specifies the color value that should replace "match". Default: 0 (transparent)
+Threshold   A floating point number in range [0, 100]. The threshold (in percent) for a color to count as a match.
+            Threshold is applied to the average of differences for red, green and blue. Default: 0 (exact match)
 
 
 10. Posterize
