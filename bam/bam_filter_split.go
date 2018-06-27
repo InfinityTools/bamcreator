@@ -2,6 +2,7 @@ package bam
 /*
 Implements filter "split": Allows you to split the BAM into multiple parts.
 Options:
+- splitMode: keyword "segment" or "spread" (Default: segment)
 - splitW: int (0) - split how many times horizontally [0, 7]
 - splitH: int (0) - split how many times vertically [0, 7]
 - segmentX: int (0) - zero-based column index of the returned BAM segment
@@ -20,9 +21,15 @@ const (
   filterNameSplit = "split"
 )
 
+// Available split filter modes.
+const (
+  FILTER_SPLIT_SEGMENT  = "segment"
+  FILTER_SPLIT_SPREAD   = "spread"
+)
+
 type FilterSplit struct {
   options     optionsMap
-  opt_splitw, opt_splith, opt_segmentx, opt_segmenty string
+  opt_splitmode, opt_splitw, opt_splith, opt_segmentx, opt_segmenty string
 }
 
 
@@ -35,10 +42,12 @@ func init() {
 // Creates a new Split filter.
 func NewFilterSplit() BamFilter {
   f := FilterSplit{options: make(optionsMap),
+                   opt_splitmode: "splitmode",
                    opt_splitw: "splitw",
                    opt_splith: "splith",
                    opt_segmentx: "segmentx",
                    opt_segmenty: "segmenty"}
+  f.SetOption(f.opt_splitmode, "segment")
   f.SetOption(f.opt_splitw, "0")
   f.SetOption(f.opt_splith, "0")
   f.SetOption(f.opt_segmentx, "0")
@@ -62,6 +71,14 @@ func (f *FilterSplit) GetOption(key string) interface{} {
 func (f *FilterSplit) SetOption(key, value string) error {
   key = strings.ToLower(key)
   switch key {
+    case f.opt_splitmode:
+      value = strings.ToLower(strings.TrimSpace(value))
+      switch value {
+        case FILTER_SPLIT_SEGMENT, FILTER_SPLIT_SPREAD:
+          f.options[key] = value
+        default:
+          return fmt.Errorf("Option %s: unsupported: %q", key, value)
+      }
     case f.opt_splitw, f.opt_splith:
       v, err := parseIntRange(value, 0, 7)
       if err != nil { return fmt.Errorf("Option %s: %v", key, err) }
@@ -79,13 +96,14 @@ func (f *FilterSplit) Process(index int, frame BamFrame, inFrames []BamFrame) (B
   frameOut := BamFrame{cx: frame.cx, cy: frame.cy, img: nil}
   imgOut := cloneImage(frame.img, false)
   frameOut.img = imgOut
-  err := f.apply(&frameOut, inFrames)
+  err := f.apply(index, &frameOut, inFrames)
   return frameOut, err
 }
 
 
 // Used internally. Applies split effect. Assumes source image is of type image.RGBA or image.Paletted
-func (f *FilterSplit) apply(frame *BamFrame, inFrames []BamFrame) error {
+func (f *FilterSplit) apply(index int, frame *BamFrame, inFrames []BamFrame) error {
+  mode := f.GetOption(f.opt_splitmode).(string)
   divX := f.GetOption(f.opt_splitw).(int) + 1   // store number of resulting segments per axis
   divY := f.GetOption(f.opt_splith).(int) + 1
   segmentX := f.GetOption(f.opt_segmentx).(int)
@@ -94,6 +112,12 @@ func (f *FilterSplit) apply(frame *BamFrame, inFrames []BamFrame) error {
   if segmentY >= divY { return fmt.Errorf("Row index %d out of range [0, %d]", segmentY, divY - 1) }
   if divX == 0 && divY == 0 { return nil }
   var transIndex byte = 0
+
+  // Mode "spread" calculates active segment based on frame index
+  if mode == FILTER_SPLIT_SPREAD {
+    segmentX = index % divX
+    segmentY = (index / divY) % divY
+  }
 
   // Applying global frame size
   sleft, stop, sright, sbottom := getGlobalCanvas(frame.img.Bounds().Dx(), frame.img.Bounds().Dy(), frame.cx, frame.cy, inFrames)

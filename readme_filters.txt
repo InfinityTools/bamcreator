@@ -220,11 +220,21 @@ Description: This filter allows you to split BAM frames into multiple segments. 
                    option "--filter". See readme.txt for more information.
 Filter name: split
 Filter options:
+SplitMode   Specifies how the split operation should be applied. Default: segment
+            Supported modes are:
+            Segment   Split all frames and return only a specific segment, as specified by the SegmentX/Y options.
+                      This mode is useful for multi-segment creature animations (such as dragons).
+            Spread    Split all frames and spread the segments over the available frame entries. Segments are chosen
+                      from top to bottom, left to right. For example, a 2x2 segmented BAM will set segment x=0,y=0 to
+                      frame 0, segment x=1,y=0 to frame 1, segment x=0,y=1 to frame 2 and segment x=1,y=1 to frame 3.
+                      It is strongly recommended to add as many frames as available segments to the BAM.
+                      This mode is useful for oversized item description images or paperdolls, where each frame
+                      contains a different segment of the same image.
 SplitW      A numeric value in range [0, 7]. It defines the number of splits to perform in horizontal direction.
             Default: 0
 SplitH      A numeric value in range [0, 7]. It defines the number of splits to perform in vertical direction.
             Default: 0
 SegmentX    A numeric value in range [0, SplitW]. It specifies the column of the segment to return. Column 0 is left-
-            most column. Default: 0
+            most column. Used by split mode "segment". Default: 0
 SegmentY    A numeric value in range [0, SplitH]. It specifies the row of the segment to return. Row 0 is top-most row.
-            Default: 0
+            Used by split mode "segment". Default: 0
