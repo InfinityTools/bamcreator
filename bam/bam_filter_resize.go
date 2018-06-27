@@ -30,10 +30,10 @@ const (
 
 // Available resize filter types.
 const (
-  FILTER_NEAREST    = "nearest"
-  FILTER_BILINEAR   = "bilinear"
-  FILTER_BICUBIC    = "bicubic"
-  FILTER_SCALEX     = "scalex"
+  FILTER_RESIZE_NEAREST   = "nearest"
+  FILTER_RESIZE_BILINEAR  = "bilinear"
+  FILTER_RESIZE_BICUBIC   = "bicubic"
+  FILTER_RESIZE_SCALEX    = "scalex"
 )
 
 type FilterResize struct {
@@ -109,7 +109,8 @@ func (f *FilterResize) SetOption(key, value string) error {
     case f.opt_type:
       value = strings.ToLower(strings.TrimSpace(value))
       switch value {
-        case FILTER_NEAREST, FILTER_BILINEAR, FILTER_BICUBIC, FILTER_SCALEX:
+        case FILTER_RESIZE_NEAREST, FILTER_RESIZE_BILINEAR,
+             FILTER_RESIZE_BICUBIC, FILTER_RESIZE_SCALEX:
           f.options[key] = value
         default:
           return fmt.Errorf("Option %s: unsupported: %q", key, value)
@@ -156,11 +157,11 @@ func (f *FilterResize) apply(frame *BamFrame, inFrames []BamFrame) error {
   var kernel FilterResizeKernel = nil
   var err error = nil
   switch scaler {
-    case FILTER_BILINEAR:
+    case FILTER_RESIZE_BILINEAR:
       kernel, err = f.newResizeBilinear(frame, dw, dh, center)
-    case FILTER_BICUBIC:
+    case FILTER_RESIZE_BICUBIC:
       kernel, err = f.newResizeBicubic(frame, dw, dh, center)
-    case FILTER_SCALEX:
+    case FILTER_RESIZE_SCALEX:
       kernel, err = f.newResizeScaleX(frame, dw, dh, transIndex, center)
     default:
       kernel, err = f.newResizeNearest(frame, dw, dh, center)
