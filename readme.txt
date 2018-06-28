@@ -131,57 +131,60 @@ BAM output is primarily controlled by configuration data in XML or JSON format.
 Example XML configuration:
 <?xml version="1.0" encoding="UTF-8"?>
 <generator>
-    <output>
-        <!-- We want BAM V1 output. -->
-        <version>1</version>
-        <!-- The BAM files will be called "example.bam" and saved in the current directory. -->
-        <file>example.bam</file>
-    </output>
+    <!-- A job defines a single conversion task. -->
+    <job>
+        <output>
+            <!-- We want BAM V1 output. -->
+            <version>1</version>
+            <!-- The BAM files will be called "example.bam" and saved in the current directory. -->
+            <file>example.bam</file>
+        </output>
 
-    <input>
-        <!-- Frames are imported from a static list of graphics files. Alternatively you can initialize
-             a file sequencer to import graphics files based on parameters. -->
-        <static>true</static>
-        <files>
-            <!-- Our list of graphics files. They are added to the BAM file in the same order as listed. -->
-            <path>./files/frame00.png</path>
-            <path>./files/frame01.png</path>
-        </files>
-    </input>
+        <input>
+            <!-- Frames are imported from a static list of graphics files. Alternatively you can initialize
+                 a file sequencer to import graphics files based on parameters. -->
+            <static>true</static>
+            <files>
+                <!-- Our list of graphics files. They are added to the BAM file in the same order as listed. -->
+                <path>./files/frame00.png</path>
+                <path>./files/frame01.png</path>
+            </files>
+        </input>
 
-    <!-- General BAM settings -->
-    <settings>
-        <!-- Center positions for our frames are optional. Omitted entries will use the center position of
-             the last defined entry or [0,0] if no entries are available. -->
-        <center>14,16</center>
-        <center>0,0</center>
-        <!-- We define a single BAM cycle with our two frames. -->
-        <sequence>0,1</sequence>
-    </settings>
+        <!-- General BAM settings -->
+        <settings>
+            <!-- Center positions for our frames are optional. Omitted entries will use the center position of
+                 the last defined entry or [0,0] if no entries are available. -->
+            <center>14,16</center>
+            <center>0,0</center>
+            <!-- We define a single BAM cycle with our two frames. -->
+            <sequence>0,1</sequence>
+        </settings>
 
-    <bamv1>
-        <!-- Generate a compressed BAMC output file. -->
-        <compress>true</compress>
-        <!-- -1 indicates to apply RLE-encoding to BAM frames only if it yields a smaller file size. -->
-        <rle>-1</rle>
-        <!-- Discard alpha from palette. This is useful if the BAM should be compatible with the
-             classic Infinity Engine games. -->
-        <alpha>false</alpha>
-        <!-- Sort BAM palette by lightness in reversed order. -->
-        <sortby>lightness_reversed</sortby>
-    </bamv1>
+        <bamv1>
+            <!-- Generate a compressed BAMC output file. -->
+            <compress>true</compress>
+            <!-- -1 indicates to apply RLE-encoding to BAM frames only if it yields a smaller file size. -->
+            <rle>-1</rle>
+            <!-- Discard alpha from palette. This is useful if the BAM should be compatible with the
+                 classic Infinity Engine games. -->
+            <alpha>false</alpha>
+            <!-- Sort BAM palette by lightness in reversed order. -->
+            <sortby>lightness_reversed</sortby>
+        </bamv1>
 
-    <!-- Filters are optional. -->
-    <filters>
-        <!-- Filter "gamma" takes a single option. -->
-        <filter>
-            <name>gamma</name>
-            <option>
-              <key>level</key>
-              <value>1.3</value>
-            </option>
-        </filter>
-    </filters>
+        <!-- Filters are optional. -->
+        <filters>
+            <!-- Filter "gamma" takes a single option. -->
+            <filter>
+                <name>gamma</name>
+                <option>
+                  <key>level</key>
+                  <value>1.3</value>
+                </option>
+            </filter>
+        </filters>
+    </job>
 </generator>
 
 Assuming this file is called "example.xml", we can generate a BAM file with the following call (using Windows syntax):
