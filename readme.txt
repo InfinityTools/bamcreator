@@ -1,7 +1,7 @@
 BAM Creator
 ~~~~~~~~~~~
 
-Version:    0.2
+Version:    0.3
 Author:     Argent77
 
 Project:    https://github.com/InfinityTools/bamcreator
