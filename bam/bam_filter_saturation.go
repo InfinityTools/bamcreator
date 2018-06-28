@@ -95,17 +95,13 @@ func (f *FilterSaturation) apply(img image.Image) error {
 
 // Applies saturation to given color value
 func (f *FilterSaturation) applyColor(col color.Color, level float64) color.Color {
-  _, _, _, a := col.RGBA()
+  r, g, b, a := col.RGBA()
   if a > 0 {
-    h, s, l := colorToHSL(col)
-    s += level
-    if s < 0.0 { s = 0.0 }
-    if s > 1.0 { s = 1.0 }
-    fr, fg, fb := hslToRGB(h, s, l)
-    return color.NRGBA{byte(fr * 255.0 + 0.5), byte(fg * 255.0 + 0.5), byte(fb * 255.0 + 0.5), byte(a)}
-  } else {
-    return col
+    slice := []byte{byte(r >> 8), byte(g >> 8), byte(b >> 8), byte(a >> 8)}
+    f.applyRGBA(slice, level)
+    return color.RGBA{slice[0], slice[1], slice[2], slice[3]}
   }
+  return col
 }
 
 // Applies saturation to given slice[0:4] of premultiplied RGBA values

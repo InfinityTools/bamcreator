@@ -115,6 +115,14 @@ func (f *FilterReplace) apply(img image.Image) error {
 // Applies replace to given color value
 func (f *FilterReplace) applyColor(col color.Color, match, replace []byte, threshold float64) color.Color {
   r, g, b, a := col.RGBA()
+  if a > 0 {
+    slice := []byte{byte(r >> 8), byte(g >> 8), byte(b >> 8), byte(a >> 8)}
+    f.applyRGBA(slice, match, replace, threshold)
+    return color.RGBA{slice[0], slice[1], slice[2], slice[3]}
+  }
+  return col
+/*
+  r, g, b, a := col.RGBA()
   if threshold > 0 {
     if a > 0 && a != uint32(match[3]) {
       r = (r >> 8) * uint32(match[3]) / a
@@ -143,6 +151,7 @@ func (f *FilterReplace) applyColor(col color.Color, match, replace []byte, thres
     }
   }
   return col
+*/
 }
 
 // Applies replace to given slice[0:4] of premultiplied RGBA values

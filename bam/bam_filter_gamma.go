@@ -97,42 +97,32 @@ func (f *FilterGamma) apply(img image.Image) error {
 
 // Applies gamma to given color value
 func (f *FilterGamma) applyColor(col color.Color, level float64) color.Color {
-  r, g, b, a := NRGBA(col)
+  r, g, b, a := col.RGBA()
   if a > 0 {
-    fr, fg, fb := float64(r) / 255.0, float64(g) / 255.0, float64(b) / 255.0
-    fr = math.Pow(fr, level)
-    if fr < 0.0 { fr = 0.0 }
-    if fr > 1.0 { fr = 1.0 }
-    fg = math.Pow(fg, level)
-    if fg < 0.0 { fg = 0.0 }
-    if fg > 1.0 { fg = 1.0 }
-    fb = math.Pow(fb, level)
-    if fb < 0.0 { fb = 0.0 }
-    if fb > 1.0 { fb = 1.0 }
-    r, g, b = byte(fr * 255.0 + 0.5), byte(fg * 255.0 + 0.5), byte(fb * 255.0 + 0.5)
-    return color.NRGBA{r, g, b, a}
-  } else {
-    return col
+    slice := []byte{byte(r >> 8), byte(g >> 8), byte(b >> 8), byte(a >> 8)}
+    f.applyRGBA(slice, level)
+    return color.RGBA{slice[0], slice[1], slice[2], slice[3]}
   }
+  return col
 }
 
 // Applies gamma to given slice[0:4] of premultiplied RGBA values
 func (f *FilterGamma) applyRGBA(slice []byte, level float64) {
-  r, g, b, a := slice[0], slice[1], slice[2], slice[3]
-  a &= 0xff
+  a := slice[3]
   if a > 0 {
     fa := float64(a)
-    fr, fg, fb := float64(r) / fa, float64(g) / fa, float64(b) / fa
+    fr, fg, fb := float64(slice[0]) / fa, float64(slice[1]) / fa, float64(slice[2]) / fa
     fr = math.Pow(fr, level)
     if fr < 0.0 { fr = 0.0 }
-    if fr > fa { fr = fa }
+    if fr > 1.0 { fr = 1.0 }
+    slice[0] = byte(fr * fa + 0.5)
     fg = math.Pow(fg, level)
     if fg < 0.0 { fg = 0.0 }
-    if fg > fa { fg = fa }
+    if fg > 1.0 { fg = 1.0 }
+    slice[1] = byte(fg * fa + 0.5)
     fb = math.Pow(fb, level)
     if fb < 0.0 { fb = 0.0 }
-    if fb > fa { fb = fa }
-    r, g, b = byte(fr * fa + 0.5), byte(fg * fa + 0.5), byte(fb * fa + 0.5)
-    slice[0], slice[1], slice[2] = r, g, b
+    if fb > 1.0 { fb = 1.0 }
+    slice[2] = byte(fb * fa + 0.5)
   }
 }

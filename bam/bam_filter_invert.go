@@ -105,29 +105,13 @@ func (f *FilterInvert) apply(img image.Image) error {
 
 // Applies invert to given color value
 func (f *FilterInvert) applyColor(col color.Color, options []bool) color.Color {
-  if nrgba, ok := col.(color.NRGBA); ok {
-    retVal := color.NRGBA{nrgba.R, nrgba.G, nrgba.B, nrgba.A}
-    if options[0] { retVal.R = 255 - retVal.R }
-    if options[1] { retVal.G = 255 - retVal.G }
-    if options[2] { retVal.B = 255 - retVal.B }
-    if options[3] { retVal.A = 255 - retVal.A }
-    return retVal
-  } else {
-    r, g, b, a := col.RGBA()
-    if a > 0 {
-      if options[0] { r = a - (r & 0xff) }
-      if options[1] { g = a - (g & 0xff) }
-      if options[2] { b = a - (b & 0xff) }
-      if options[3] {
-        a2 := 255 - (a & 0xff)
-        if options[0] { r = r * a2 / a }
-        if options[0] { g = g * a2 / a }
-        if options[0] { b = b * a2 / a }
-        a = a2
-      }
-    }
-    return color.RGBA{byte(r), byte(g), byte(b), byte(a)}
+  r, g, b, a := col.RGBA()
+  if a > 0 {
+    slice := []byte{byte(r >> 8), byte(g >> 8), byte(b >> 8), byte(a >> 8)}
+    f.applyRGBA(slice, options)
+    return color.RGBA{slice[0], slice[1], slice[2], slice[3]}
   }
+  return col
 }
 
 // Applies invert to given slice[0:4] of premultiplied RGBA values

@@ -107,70 +107,44 @@ func (f *FilterBalance) apply(img image.Image) error {
 
 // Applies balance to given color value
 func (f *FilterBalance) applyColor(col color.Color, options []float64) color.Color {
-  r, g, b, a := NRGBA(col)
-  if options[0] != 0.0 {
-    fr := float64(r) / 255.0
-    fr += options[0]
-    if fr < 0.0 { fr = 0.0 }
-    if fr > 1.0 { fr = 1.0 }
-    r = byte(fr * 255.0 + 0.5)
+  r, g, b, a := col.RGBA()
+  if a > 0 {
+    slice := []byte{byte(r >> 8), byte(g >> 8), byte(b >> 8), byte(a >> 8)}
+    f.applyRGBA(slice, options)
+    return color.RGBA{slice[0], slice[1], slice[2], slice[3]}
   }
-  if options[1] != 0.0 {
-    fg := float64(g) / 255.0
-    fg += options[1]
-    if fg < 0.0 { fg = 0.0 }
-    if fg > 1.0 { fg = 1.0 }
-    g = byte(fg * 255.0 + 0.5)
-  }
-  if options[2] != 0.0 {
-    fb := float64(b) / 255.0
-    fb += options[2]
-    if fb < 0.0 { fb = 0.0 }
-    if fb > 1.0 { fb = 1.0 }
-    b = byte(fb * 255.0 + 0.5)
-  }
-  if options[3] != 0.0 {
-    fa := float64(a) / 255.0
-    fa += options[3]
-    if fa < 0.0 { fa = 0.0 }
-    if fa > 1.0 { fa = 1.0 }
-    a = byte(fa * 255.0 + 0.5)
-  }
-  return color.NRGBA{r, g, b, a}
+  return col
 }
 
 // Applies balance to given slice[0:4] of premultiplied RGBA values
 func (f *FilterBalance) applyRGBA(slice []byte, options []float64) {
-  fa2s := float64(slice[3])   // scaled final alpha [0, 255]
-  fa := fa2s / 255.0          // normalized initial alpha [0, 1]
-  if options[3] != 0.0 {
-    fa2 := fa + options[3]
-    if fa2 < 0.0 { fa2 = 0.0 }
-    if fa2 > 1.0 { fa2 = 1.0 }
-    fa2s = fa2 * 255.0
-    slice[3] = byte(fa2s)
-  }
-
-  if fa2s > 0.0 {
-    fr, fg, fb := 0.0, 0.0, 0.0
-    if fa > 0.0 {
-      fr /= fa
-      fg /= fa
-      fb /= fa
+  a := slice[3]
+  if a > 0 {
+    fa := float64(a)
+    fr, fg, fb := float64(slice[0]) / fa, float64(slice[1]) / fa, float64(slice[2]) / fa
+    if options[3] != 0.0 {
+      fa /= 255.0
+      fa += options[3]
+      if fa < 0.0 { fa = 0.0 }
+      if fa > 1.0 { fa = 1.0 }
+      slice[3] = byte(fa * 255.0 + 0.5)
+      fa *= 255.0
     }
-    fr += options[0]
-    fg += options[1]
-    fb += options[2]
-    if fr < 0.0 { fr = 0.0 }
-    if fg < 0.0 { fg = 0.0 }
-    if fb < 0.0 { fb = 0.0 }
-    if fr > 1.0 { fr = 1.0 }
-    if fg > 1.0 { fg = 1.0 }
-    if fb > 1.0 { fb = 1.0 }
-    slice[0] = byte(fr * fa2s + 0.5)
-    slice[1] = byte(fg * fa2s + 0.5)
-    slice[2] = byte(fb * fa2s + 0.5)
-  } else {
-    slice[0], slice[1], slice[2] = 0, 0, 0
+    if fa > 0.0 {
+      fr += options[0]
+      if fr < 0.0 { fr = 0.0 }
+      if fr > 1.0 { fr = 1.0 }
+      slice[0] = byte(fr * fa + 0.5)
+      fg += options[1]
+      if fg < 0.0 { fg = 0.0 }
+      if fg > 1.0 { fg = 1.0 }
+      slice[1] = byte(fg * fa + 0.5)
+      fb += options[2]
+      if fb < 0.0 { fb = 0.0 }
+      if fb > 1.0 { fb = 1.0 }
+      slice[2] = byte(fb * fa + 0.5)
+    } else {
+      slice[0], slice[1], slice[2] = 0, 0, 0
+    }
   }
 }
